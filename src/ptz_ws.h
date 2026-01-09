@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ESPAsyncWebServer.h>
+#include <WebSocketsServer.h>
 
 #include "ptz_motion.h"
 #include "ptz_owner.h"
@@ -22,22 +22,19 @@ class PtzWebSocket {
                        int wifiRssi);
 
  private:
-  void onEvent(AsyncWebSocket* server,
-               AsyncWebSocketClient* client,
-               AwsEventType type,
-               void* arg,
-               uint8_t* data,
-               size_t len);
+  void onEvent(uint8_t clientNum,
+               WStype_t type,
+               uint8_t* payload,
+               size_t length);
 
-  void handleText(AsyncWebSocketClient* client, const char* payload, size_t len);
-  void sendAck(AsyncWebSocketClient* client, const char* refType, uint32_t nowMs);
-  void sendError(AsyncWebSocketClient* client,
+  void handleText(uint8_t clientNum, const char* payload, size_t len);
+  void sendAck(uint8_t clientNum, const char* refType, uint32_t nowMs);
+  void sendError(uint8_t clientNum,
                  const char* code,
                  const char* message,
                  uint32_t nowMs);
 
-  AsyncWebServer server_;
-  AsyncWebSocket ws_;
+  WebSocketsServer ws_;
   PtzOwner* owner_ = nullptr;
   PtzMotion* motion_ = nullptr;
 };

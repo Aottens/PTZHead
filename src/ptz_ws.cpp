@@ -16,28 +16,22 @@ static float clampNorm(float value) {
   return value;
 }
 
-PtzWebSocket::PtzWebSocket() : server_(kWebsocketPort), ws_(kWebsocketPath) {}
+PtzWebSocket::PtzWebSocket() : ws_(kWebsocketPort, kWebsocketPath) {}
 
 void PtzWebSocket::begin(PtzOwner* owner, PtzMotion* motion) {
   owner_ = owner;
   motion_ = motion;
 
-  ws_.onEvent([this](AsyncWebSocket* server,
-                     AsyncWebSocketClient* client,
-                     AwsEventType type,
-                     void* arg,
-                     uint8_t* data,
-                     size_t len) {
-    onEvent(server, client, type, arg, data, len);
-  });
-
-  server_.addHandler(&ws_);
-  server_.begin();
+  ws_.begin();
+  ws_.onEvent([this](uint8_t clientNum,
+                     WStype_t type,
+                     uint8_t* payload,
+                     size_t length) { onEvent(clientNum, type, payload, length); });
   PTZ_LOGI("WS", "WebSocket listening on port %u path %s", kWebsocketPort, kWebsocketPath);
 }
 
 void PtzWebSocket::loop() {
-  ws_.cleanupClients();
+  ws_.loop();
 }
 
 void PtzWebSocket::broadcastStatus(uint32_t nowMs,
@@ -78,33 +72,27 @@ void PtzWebSocket::broadcastStatus(uint32_t nowMs,
 
   char buffer[512];
   const size_t size = serializeJson(doc, buffer, sizeof(buffer));
-  ws_.textAll(buffer, size);
+  ws_.broadcastTXT(buffer, size);
 
   if (logShouldEmit(kLogRateWsStatus, 1000)) {
     PTZ_LOGD("WS", "Status broadcast %u bytes", static_cast<unsigned>(size));
   }
 }
 
-void PtzWebSocket::onEvent(AsyncWebSocket* server,
-                           AsyncWebSocketClient* client,
-                           AwsEventType type,
-                           void* arg,
-                           uint8_t* data,
-                           size_t len) {
-  (void)server;
-  if (type == WS_EVT_CONNECT) {
-    PTZ_LOGI("WS", "Client connected id=%u", client->id());
-  } else if (type == WS_EVT_DISCONNECT) {
-    PTZ_LOGI("WS", "Client disconnected id=%u", client->id());
-  } else if (type == WS_EVT_DATA) {
-    AwsFrameInfo* info = reinterpret_cast<AwsFrameInfo*>(arg);
-    if (info->opcode == WS_TEXT && info->final && info->index == 0 && info->len == len) {
-      handleText(client, reinterpret_cast<char*>(data), len);
-    }
+void PtzWebSocket::onEvent(uint8_t clientNum,
+                           WStype_t type,
+                           uint8_t* payload,
+                           size_t length) {
+  if (type == WStype_CONNECTED) {
+    PTZ_LOGI("WS", "Client connected id=%u", clientNum);
+  } else if (type == WStype_DISCONNECTED) {
+    PTZ_LOGI("WS", "Client disconnected id=%u", clientNum);
+  } else if (type == WStype_TEXT) {
+    handleText(clientNum, reinterpret_cast<char*>(payload), length);
   }
 }
 
-void PtzWebSocket::handleText(AsyncWebSocketClient* client, const char* payload, size_t len) {
+void PtzWebSocket::handleText(uint8_t clientNum, const char* payload, size_t len) {
   JsonDocument doc;
   DeserializationError err = deserializeJson(doc, payload, len);
   const uint32_t nowMs = millis();
@@ -113,7 +101,7 @@ void PtzWebSocket::handleText(AsyncWebSocketClient* client, const char* payload,
     if (logShouldEmit(kLogRateWsParseError, 500)) {
       PTZ_LOGW("WS", "JSON parse error: %s", err.c_str());
     }
-    sendError(client, "invalid_json", "Failed to parse JSON", nowMs);
+    sendError(clientNum, "invalid_json", "Failed to parse JSON", nowMs);
     return;
   }
 
@@ -122,37 +110,37 @@ void PtzWebSocket::handleText(AsyncWebSocketClient* client, const char* payload,
   const char* source = doc["source"] | "";
 
   if (version != kProtocolVersion) {
-    sendError(client, "invalid_version", "Unsupported protocol version", nowMs);
+    sendError(clientNum, "invalid_version", "Unsupported protocol version", nowMs);
     return;
   }
 
   if (strcmp(source, "app") != 0) {
-    sendError(client, "invalid_source", "Only app source supported", nowMs);
+    sendError(clientNum, "invalid_source", "Only app source supported", nowMs);
     return;
   }
 
-  const uint32_t clientId = client->id();
+  const uint32_t clientId = clientNum;
 
   if (strcmp(type, "requestControl") == 0) {
     owner_->requestAppControl(clientId, nowMs);
-    sendAck(client, "requestControl", nowMs);
+    sendAck(clientNum, "requestControl", nowMs);
     PTZ_LOGI("OWNER", "App requested control client=%u", clientId);
     return;
   }
 
   if (strcmp(type, "releaseControl") == 0) {
     if (!owner_->releaseAppControl(clientId)) {
-      sendError(client, "not_owner", "Client is not the active owner", nowMs);
+      sendError(clientNum, "not_owner", "Client is not the active owner", nowMs);
       return;
     }
-    sendAck(client, "releaseControl", nowMs);
+    sendAck(clientNum, "releaseControl", nowMs);
     PTZ_LOGI("OWNER", "App released control client=%u", clientId);
     return;
   }
 
   const OwnerSnapshot snap = owner_->snapshot();
   if (snap.owner != Owner::App || snap.controlClientId != clientId) {
-    sendError(client, "not_owner", "Client is not the active owner", nowMs);
+    sendError(clientNum, "not_owner", "Client is not the active owner", nowMs);
     return;
   }
 
@@ -160,40 +148,40 @@ void PtzWebSocket::handleText(AsyncWebSocketClient* client, const char* payload,
 
   if (strcmp(type, "setVelocity") == 0) {
     if (!doc["pan"].is<float>() || !doc["tilt"].is<float>() || !doc["zoom"].is<float>()) {
-      sendError(client, "invalid_payload", "Missing velocity fields", nowMs);
+      sendError(clientNum, "invalid_payload", "Missing velocity fields", nowMs);
       return;
     }
     const float pan = clampNorm(doc["pan"].as<float>());
     const float tilt = clampNorm(doc["tilt"].as<float>());
     const float zoom = clampNorm(doc["zoom"].as<float>());
     motion_->setVelocity(pan, tilt, zoom);
-    sendAck(client, "setVelocity", nowMs);
+    sendAck(clientNum, "setVelocity", nowMs);
     return;
   }
 
   if (strcmp(type, "moveTo") == 0) {
     if (!doc["pan"].is<float>() || !doc["tilt"].is<float>() || !doc["zoom"].is<float>()) {
-      sendError(client, "invalid_payload", "Missing target fields", nowMs);
+      sendError(clientNum, "invalid_payload", "Missing target fields", nowMs);
       return;
     }
     const float pan = doc["pan"].as<float>();
     const float tilt = doc["tilt"].as<float>();
     const float zoom = doc["zoom"].as<float>();
     motion_->moveTo(pan, tilt, zoom);
-    sendAck(client, "moveTo", nowMs);
+    sendAck(clientNum, "moveTo", nowMs);
     return;
   }
 
   if (strcmp(type, "stop") == 0) {
     motion_->stop();
-    sendAck(client, "stop", nowMs);
+    sendAck(clientNum, "stop", nowMs);
     return;
   }
 
-  sendError(client, "unknown_type", "Unknown command type", nowMs);
+  sendError(clientNum, "unknown_type", "Unknown command type", nowMs);
 }
 
-void PtzWebSocket::sendAck(AsyncWebSocketClient* client, const char* refType, uint32_t nowMs) {
+void PtzWebSocket::sendAck(uint8_t clientNum, const char* refType, uint32_t nowMs) {
   JsonDocument doc;
   doc["v"] = kProtocolVersion;
   doc["type"] = "ack";
@@ -202,10 +190,10 @@ void PtzWebSocket::sendAck(AsyncWebSocketClient* client, const char* refType, ui
 
   char buffer[192];
   const size_t size = serializeJson(doc, buffer, sizeof(buffer));
-  client->text(buffer, size);
+  ws_.sendTXT(clientNum, buffer, size);
 }
 
-void PtzWebSocket::sendError(AsyncWebSocketClient* client,
+void PtzWebSocket::sendError(uint8_t clientNum,
                              const char* code,
                              const char* message,
                              uint32_t nowMs) {
@@ -218,7 +206,7 @@ void PtzWebSocket::sendError(AsyncWebSocketClient* client,
 
   char buffer[256];
   const size_t size = serializeJson(doc, buffer, sizeof(buffer));
-  client->text(buffer, size);
+  ws_.sendTXT(clientNum, buffer, size);
 }
 
 } // namespace ptz
