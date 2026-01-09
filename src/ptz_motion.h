@@ -27,9 +27,9 @@ class PtzMotion {
 
   void setEnabled(bool enabled);
   bool enabled() const;
-  bool isMoving() const;
+  bool isMoving();
 
-  MotionState state() const;
+  MotionState state();
 
  private:
   AccelStepper pan_;

@@ -64,15 +64,15 @@ void PtzWebSocket::broadcastStatus(uint32_t nowMs,
   doc["motorsEnabled"] = motorsEnabled;
 
   const MotionState state = motion.state();
-  JsonObject pan = doc.createNestedObject("pan");
+  JsonObject pan = doc["pan"].to<JsonObject>();
   pan["pos"] = state.panPos;
   pan["target"] = state.panTarget;
 
-  JsonObject tilt = doc.createNestedObject("tilt");
+  JsonObject tilt = doc["tilt"].to<JsonObject>();
   tilt["pos"] = state.tiltPos;
   tilt["target"] = state.tiltTarget;
 
-  JsonObject zoom = doc.createNestedObject("zoom");
+  JsonObject zoom = doc["zoom"].to<JsonObject>();
   zoom["pos"] = state.zoomPos;
   zoom["target"] = state.zoomTarget;
 

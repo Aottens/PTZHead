@@ -94,11 +94,11 @@ bool PtzMotion::enabled() const {
   return outputsEnabled_;
 }
 
-bool PtzMotion::isMoving() const {
+bool PtzMotion::isMoving() {
   return pan_.distanceToGo() != 0 || tilt_.distanceToGo() != 0 || zoom_.distanceToGo() != 0;
 }
 
-MotionState PtzMotion::state() const {
+MotionState PtzMotion::state() {
   MotionState state{
       static_cast<float>(pan_.currentPosition()),
       static_cast<float>(tilt_.currentPosition()),
