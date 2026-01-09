@@ -41,7 +41,7 @@ void PtzWebSocket::loop() {
 }
 
 void PtzWebSocket::broadcastStatus(uint32_t nowMs,
-                                   const PtzMotion& motion,
+                                   PtzMotion& motion,
                                    const PtzOwner& owner,
                                    bool gamepadConnected,
                                    bool motorsEnabled,
