@@ -46,7 +46,7 @@ void PtzWebSocket::broadcastStatus(uint32_t nowMs,
                                    bool gamepadConnected,
                                    bool motorsEnabled,
                                    int wifiRssi) {
-  StaticJsonDocument<768> doc;
+  JsonDocument doc;
   doc["v"] = kProtocolVersion;
   doc["type"] = "status";
   doc["timestampMs"] = nowMs;
@@ -64,15 +64,15 @@ void PtzWebSocket::broadcastStatus(uint32_t nowMs,
   doc["motorsEnabled"] = motorsEnabled;
 
   const MotionState state = motion.state();
-  JsonObject pan = doc.createNestedObject("pan");
+  JsonObject pan = doc["pan"].to<JsonObject>();
   pan["pos"] = state.panPos;
   pan["target"] = state.panTarget;
 
-  JsonObject tilt = doc.createNestedObject("tilt");
+  JsonObject tilt = doc["tilt"].to<JsonObject>();
   tilt["pos"] = state.tiltPos;
   tilt["target"] = state.tiltTarget;
 
-  JsonObject zoom = doc.createNestedObject("zoom");
+  JsonObject zoom = doc["zoom"].to<JsonObject>();
   zoom["pos"] = state.zoomPos;
   zoom["target"] = state.zoomTarget;
 
@@ -105,7 +105,7 @@ void PtzWebSocket::onEvent(AsyncWebSocket* server,
 }
 
 void PtzWebSocket::handleText(AsyncWebSocketClient* client, const char* payload, size_t len) {
-  StaticJsonDocument<384> doc;
+  JsonDocument doc;
   DeserializationError err = deserializeJson(doc, payload, len);
   const uint32_t nowMs = millis();
 
@@ -194,7 +194,7 @@ void PtzWebSocket::handleText(AsyncWebSocketClient* client, const char* payload,
 }
 
 void PtzWebSocket::sendAck(AsyncWebSocketClient* client, const char* refType, uint32_t nowMs) {
-  StaticJsonDocument<192> doc;
+  JsonDocument doc;
   doc["v"] = kProtocolVersion;
   doc["type"] = "ack";
   doc["timestampMs"] = nowMs;
@@ -209,7 +209,7 @@ void PtzWebSocket::sendError(AsyncWebSocketClient* client,
                              const char* code,
                              const char* message,
                              uint32_t nowMs) {
-  StaticJsonDocument<256> doc;
+  JsonDocument doc;
   doc["v"] = kProtocolVersion;
   doc["type"] = "error";
   doc["timestampMs"] = nowMs;
