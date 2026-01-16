@@ -24,6 +24,15 @@ uint32_t g_lastStatusMs = 0;
 uint32_t g_idleStartMs = 0;
 Owner g_lastOwner = Owner::None;
 
+struct Preset {
+  float pan = 0.0f;
+  float tilt = 0.0f;
+  float zoom = 0.0f;
+  bool valid = false;
+};
+
+Preset g_presets[4];
+
 void handleSerialCommands() {
   static String line;
   while (Serial.available()) {
@@ -97,6 +106,13 @@ void loop() {
     g_owner.requestGamepadControl(nowMs);
   }
 
+  if (commands.presetSave || commands.presetRecall) {
+    g_owner.setGamepadActive(nowMs);
+    if (g_owner.owner() == Owner::None) {
+      g_owner.requestGamepadControl(nowMs);
+    }
+  }
+
   if (commands.hasInput) {
     g_owner.setGamepadActive(nowMs);
     if (g_owner.owner() == Owner::None) {
@@ -116,6 +132,27 @@ void loop() {
       g_motion.stop();
     }
     g_lastOwner = currentOwner;
+  }
+
+  if (commands.presetSave) {
+    const ptz::MotionState state = g_motion.state();
+    Preset& preset = g_presets[commands.presetIndex];
+    preset.pan = state.panPos;
+    preset.tilt = state.tiltPos;
+    preset.zoom = state.zoomPos;
+    preset.valid = true;
+    g_gamepad.rumblePresetSaved();
+    PTZ_LOGI("PRESET", "Saved preset %u", static_cast<unsigned>(commands.presetIndex));
+  }
+
+  if (commands.presetRecall) {
+    const Preset& preset = g_presets[commands.presetIndex];
+    if (preset.valid) {
+      g_motion.moveTo(preset.pan, preset.tilt, preset.zoom);
+      PTZ_LOGI("PRESET", "Recalled preset %u", static_cast<unsigned>(commands.presetIndex));
+    } else {
+      PTZ_LOGW("PRESET", "Preset %u not set", static_cast<unsigned>(commands.presetIndex));
+    }
   }
 
   if (currentOwner == Owner::Gamepad) {

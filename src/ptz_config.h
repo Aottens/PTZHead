@@ -49,6 +49,7 @@ constexpr uint8_t kProtocolVersion = 1;
 
 constexpr uint32_t kProvisionComboHoldMs = 2000;
 constexpr uint32_t kTakeControlHoldMs = 1000;
+constexpr uint32_t kPresetHoldMs = 2000;
 
 enum class LogLevel : uint8_t {
   Error = 0,
