@@ -44,6 +44,10 @@ class PtzMotion {
   float tiltVelocity_ = 0.0f;
   float zoomVelocity_ = 0.0f;
 
+  float panVelocityCmd_ = 0.0f;
+  float tiltVelocityCmd_ = 0.0f;
+  float zoomVelocityCmd_ = 0.0f;
+
   bool outputsEnabled_ = false;
 };
 
