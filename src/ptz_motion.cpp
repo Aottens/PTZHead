@@ -32,6 +32,38 @@ void PtzMotion::begin() {
 }
 
 void PtzMotion::update(float dtSeconds) {
+  const float panMaxDelta = kPanSlewSps2 * dtSeconds;
+  const float tiltMaxDelta = kTiltSlewSps2 * dtSeconds;
+  const float zoomMaxDelta = kZoomSlewSps2 * dtSeconds;
+
+  const float panDelta = panVelocityCmd_ - panVelocity_;
+  const float tiltDelta = tiltVelocityCmd_ - tiltVelocity_;
+  const float zoomDelta = zoomVelocityCmd_ - zoomVelocity_;
+
+  if (panDelta > panMaxDelta) {
+    panVelocity_ += panMaxDelta;
+  } else if (panDelta < -panMaxDelta) {
+    panVelocity_ -= panMaxDelta;
+  } else {
+    panVelocity_ = panVelocityCmd_;
+  }
+
+  if (tiltDelta > tiltMaxDelta) {
+    tiltVelocity_ += tiltMaxDelta;
+  } else if (tiltDelta < -tiltMaxDelta) {
+    tiltVelocity_ -= tiltMaxDelta;
+  } else {
+    tiltVelocity_ = tiltVelocityCmd_;
+  }
+
+  if (zoomDelta > zoomMaxDelta) {
+    zoomVelocity_ += zoomMaxDelta;
+  } else if (zoomDelta < -zoomMaxDelta) {
+    zoomVelocity_ -= zoomMaxDelta;
+  } else {
+    zoomVelocity_ = zoomVelocityCmd_;
+  }
+
   panTarget_ += panVelocity_ * dtSeconds;
   tiltTarget_ += tiltVelocity_ * dtSeconds;
   zoomTarget_ += zoomVelocity_ * dtSeconds;
@@ -48,9 +80,9 @@ void PtzMotion::run() {
 }
 
 void PtzMotion::setVelocity(float panNorm, float tiltNorm, float zoomNorm) {
-  panVelocity_ = panNorm * kPanMaxSps;
-  tiltVelocity_ = tiltNorm * kTiltMaxSps;
-  zoomVelocity_ = zoomNorm * kZoomMaxSps;
+  panVelocityCmd_ = panNorm * kPanMaxSps;
+  tiltVelocityCmd_ = tiltNorm * kTiltMaxSps;
+  zoomVelocityCmd_ = zoomNorm * kZoomMaxSps;
 }
 
 void PtzMotion::moveTo(float panSteps, float tiltSteps, float zoomSteps) {
@@ -71,6 +103,9 @@ void PtzMotion::stop() {
   panVelocity_ = 0.0f;
   tiltVelocity_ = 0.0f;
   zoomVelocity_ = 0.0f;
+  panVelocityCmd_ = 0.0f;
+  tiltVelocityCmd_ = 0.0f;
+  zoomVelocityCmd_ = 0.0f;
 
   pan_.moveTo(lroundf(panTarget_));
   tilt_.moveTo(lroundf(tiltTarget_));

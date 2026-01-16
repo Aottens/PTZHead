@@ -59,6 +59,9 @@ GamepadCommands PtzGamepad::readCommands(uint32_t nowMs) {
   cmd.pan = applyDeadzone(int16ToNorm(gp->axisX()));
   cmd.tilt = applyDeadzone(-int16ToNorm(gp->axisY()));
   cmd.zoom = applyDeadzone(-int16ToNorm(gp->axisRY()));
+  if (kInvertPan) {
+    cmd.pan = -cmd.pan;
+  }
   cmd.hasInput = (cmd.pan != 0.0f) || (cmd.tilt != 0.0f) || (cmd.zoom != 0.0f);
 
   const bool provisioningCombo = gp->l1() && gp->r1() && gp->x() && gp->y();
