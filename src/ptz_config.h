@@ -18,14 +18,19 @@ constexpr uint8_t kZoomEnPin = 27; // active low
 
 constexpr float kDeadzone = 0.08f;
 constexpr bool kUseExpo = true;
+constexpr bool kInvertPan = true;
 
-constexpr float kPanMaxSps = 8000.0f;
-constexpr float kTiltMaxSps = 8000.0f;
-constexpr float kZoomMaxSps = 6000.0f;
+constexpr float kPanMaxSps = 4000.0f;
+constexpr float kTiltMaxSps = 4000.0f;
+constexpr float kZoomMaxSps = 4000.0f;
 
 constexpr float kPanAccel = 20000.0f;
 constexpr float kTiltAccel = 20000.0f;
 constexpr float kZoomAccel = 15000.0f;
+
+constexpr float kPanSlewSps2 = 6000.0f;
+constexpr float kTiltSlewSps2 = 6000.0f;
+constexpr float kZoomSlewSps2 = 6000.0f;
 
 constexpr uint32_t kStatusIntervalMs = 50;
 constexpr uint32_t kAppHeartbeatTimeoutMs = 750;
@@ -44,6 +49,7 @@ constexpr uint8_t kProtocolVersion = 1;
 
 constexpr uint32_t kProvisionComboHoldMs = 2000;
 constexpr uint32_t kTakeControlHoldMs = 1000;
+constexpr uint32_t kPresetHoldMs = 2000;
 
 enum class LogLevel : uint8_t {
   Error = 0,

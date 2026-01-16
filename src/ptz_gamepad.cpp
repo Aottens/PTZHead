@@ -11,6 +11,9 @@ namespace ptz {
 GamepadPtr PtzGamepad::gamepads_[BP32_MAX_GAMEPADS] = {nullptr};
 uint32_t PtzGamepad::comboStartMs_ = 0;
 uint32_t PtzGamepad::takeControlStartMs_ = 0;
+uint32_t PtzGamepad::presetHoldStartMs_[4] = {0, 0, 0, 0};
+bool PtzGamepad::presetConsumed_[4] = {false, false, false, false};
+bool PtzGamepad::presetPrevPressed_[4] = {false, false, false, false};
 
 static float int16ToNorm(int16_t value) {
   float x = static_cast<float>(value) / 512.0f;
@@ -53,13 +56,43 @@ GamepadCommands PtzGamepad::readCommands(uint32_t nowMs) {
   if (!gp) {
     comboStartMs_ = 0;
     takeControlStartMs_ = 0;
+    for (int i = 0; i < 4; ++i) {
+      presetHoldStartMs_[i] = 0;
+      presetConsumed_[i] = false;
+      presetPrevPressed_[i] = false;
+    }
     return cmd;
   }
 
   cmd.pan = applyDeadzone(int16ToNorm(gp->axisX()));
   cmd.tilt = applyDeadzone(-int16ToNorm(gp->axisY()));
   cmd.zoom = applyDeadzone(-int16ToNorm(gp->axisRY()));
+  if (kInvertPan) {
+    cmd.pan = -cmd.pan;
+  }
   cmd.hasInput = (cmd.pan != 0.0f) || (cmd.tilt != 0.0f) || (cmd.zoom != 0.0f);
+
+  const bool presetPressed[4] = {gp->a(), gp->b(), gp->x(), gp->y()};
+  for (uint8_t i = 0; i < 4; ++i) {
+    if (presetPressed[i]) {
+      if (!presetPrevPressed_[i]) {
+        presetHoldStartMs_[i] = nowMs;
+        presetConsumed_[i] = false;
+      } else if (!presetConsumed_[i] && nowMs - presetHoldStartMs_[i] >= kPresetHoldMs) {
+        cmd.presetSave = true;
+        cmd.presetIndex = i;
+        presetConsumed_[i] = true;
+      }
+    } else if (presetPrevPressed_[i]) {
+      if (!presetConsumed_[i]) {
+        cmd.presetRecall = true;
+        cmd.presetIndex = i;
+      }
+      presetHoldStartMs_[i] = 0;
+      presetConsumed_[i] = false;
+    }
+    presetPrevPressed_[i] = presetPressed[i];
+  }
 
   const bool provisioningCombo = gp->l1() && gp->r1() && gp->x() && gp->y();
   if (provisioningCombo) {
@@ -94,6 +127,13 @@ GamepadCommands PtzGamepad::readCommands(uint32_t nowMs) {
 
 bool PtzGamepad::isConnected() const {
   return firstConnected() != nullptr;
+}
+
+void PtzGamepad::rumblePresetSaved() {
+  GamepadPtr gp = firstConnected();
+  if (gp) {
+    gp->setRumble(0xc0, 200);
+  }
 }
 
 void PtzGamepad::onConnect(GamepadPtr gp) {
