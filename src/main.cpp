@@ -173,7 +173,8 @@ void loop() {
     if (g_idleStartMs == 0) {
       g_idleStartMs = nowMs;
     }
-    if (nowMs - g_idleStartMs >= ptz::kIdleDisableTimeoutMs) {
+    if (ptz::kIdleDisableTimeoutMs > 0 &&
+        nowMs - g_idleStartMs >= ptz::kIdleDisableTimeoutMs) {
       if (g_motion.enabled()) {
         g_motion.setEnabled(false);
         PTZ_LOGI("MOTION", "Idle timeout, outputs disabled");
