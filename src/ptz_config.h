@@ -34,7 +34,7 @@ constexpr float kZoomSlewSps2 = 6000.0f;
 
 constexpr uint32_t kStatusIntervalMs = 50;
 constexpr uint32_t kAppHeartbeatTimeoutMs = 750;
-constexpr uint32_t kIdleDisableTimeoutMs = 2000;
+constexpr uint32_t kIdleDisableTimeoutMs = 0;
 constexpr uint32_t kGamepadOwnerTimeoutMs = 1000;
 
 constexpr uint32_t kWifiConnectTimeoutS = 20;
