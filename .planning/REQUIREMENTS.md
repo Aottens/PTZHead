@@ -78,36 +78,36 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | — | Pending |
-| PLAT-02 | — | Pending |
-| PLAT-03 | — | Pending |
-| PLAT-04 | — | Pending |
-| PLAT-05 | — | Pending |
-| MOT-01 | — | Pending |
-| MOT-02 | — | Pending |
-| MOT-03 | — | Pending |
-| MOT-04 | — | Pending |
-| MOT-05 | — | Pending |
-| MOT-06 | — | Pending |
-| MOT-07 | — | Pending |
-| SPD-01 | — | Pending |
-| SPD-02 | — | Pending |
-| SPD-03 | — | Pending |
-| NET-01 | — | Pending |
-| NET-02 | — | Pending |
-| NET-03 | — | Pending |
-| NET-04 | — | Pending |
-| NET-05 | — | Pending |
-| FB-01 | — | Pending |
-| FB-02 | — | Pending |
-| FB-03 | — | Pending |
-| FB-04 | — | Pending |
+| PLAT-01 | Phase 1 | Pending |
+| PLAT-02 | Phase 1 | Pending |
+| PLAT-03 | Phase 1 | Pending |
+| PLAT-04 | Phase 1 | Pending |
+| PLAT-05 | Phase 1 | Pending |
+| MOT-01 | Phase 2 | Pending |
+| MOT-02 | Phase 2 | Pending |
+| MOT-03 | Phase 2 | Pending |
+| MOT-04 | Phase 2 | Pending |
+| MOT-05 | Phase 2 | Pending |
+| MOT-06 | Phase 2 | Pending |
+| MOT-07 | Phase 2 | Pending |
+| SPD-01 | Phase 2 | Pending |
+| SPD-02 | Phase 2 | Pending |
+| SPD-03 | Phase 2 | Pending |
+| NET-01 | Phase 2 | Pending |
+| NET-02 | Phase 2 | Pending |
+| NET-03 | Phase 3 | Pending |
+| NET-04 | Phase 2 | Pending |
+| NET-05 | Phase 2 | Pending |
+| FB-01 | Phase 3 | Pending |
+| FB-02 | Phase 3 | Pending |
+| FB-03 | Phase 3 | Pending |
+| FB-04 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24 ⚠️
+- Mapped to phases: 24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-03*
-*Last updated: 2026-04-03 after initial definition*
+*Last updated: 2026-04-03 after roadmap creation*
