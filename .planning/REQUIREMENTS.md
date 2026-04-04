@@ -1,0 +1,113 @@
+# Requirements: PTZHead v2
+
+**Defined:** 2026-04-03
+**Core Value:** Reliable, low-latency OSC control of a 3-axis PTZ head from Bitfocus Companion
+
+## v1 Requirements
+
+### Platform
+
+- [ ] **PLAT-01**: Firmware builds on standard espressif32 Arduino framework (no Bluepad32 patched core)
+- [ ] **PLAT-02**: Bluepad32 gamepad module is fully removed
+- [ ] **PLAT-03**: WebSocket API module is fully removed
+- [ ] **PLAT-04**: Ownership arbitration module is fully removed
+- [ ] **PLAT-05**: Main loop is simplified for single-source OSC input
+
+### Motion Control
+
+- [ ] **MOT-01**: User can control pan axis velocity via OSC (`/ptz/pan`)
+- [ ] **MOT-02**: User can control tilt axis velocity via OSC (`/ptz/tilt`)
+- [ ] **MOT-03**: User can control zoom axis velocity via OSC (`/ptz/zoom`)
+- [ ] **MOT-04**: User can stop a single axis via OSC (`/ptz/pan/stop`, etc.)
+- [ ] **MOT-05**: User can stop all axes via OSC (`/ptz/stop`)
+- [ ] **MOT-06**: Motors accelerate and decelerate smoothly (existing AccelStepper behavior)
+- [ ] **MOT-07**: Firmware auto-stops all axes if no OSC command received within heartbeat timeout (watchdog)
+
+### Speed Presets
+
+- [ ] **SPD-01**: User can switch between at least 3 speed/acceleration presets via OSC
+- [ ] **SPD-02**: Speed presets affect max velocity and acceleration for all axes
+- [ ] **SPD-03**: Active speed preset persists until changed (not per-command)
+
+### Network
+
+- [ ] **NET-01**: Firmware connects to WiFi using stored credentials via WiFiManager captive portal
+- [ ] **NET-02**: WiFi power save is disabled for sub-50ms OSC response latency
+- [ ] **NET-03**: Firmware advertises via mDNS as `ptzhead.local` with `_osc._udp` service
+- [ ] **NET-04**: Firmware listens for OSC on a configurable UDP port
+- [ ] **NET-05**: Firmware reconnects to WiFi automatically on disconnect (non-blocking, event-based)
+
+### OSC Feedback
+
+- [ ] **FB-01**: Firmware sends per-axis moving state back via OSC (integer: 0/1)
+- [ ] **FB-02**: Firmware sends active speed preset ID back via OSC (integer)
+- [ ] **FB-03**: Firmware sends WiFi RSSI back via OSC (integer)
+- [ ] **FB-04**: All OSC feedback uses integer values (Companion generic-osc compatibility)
+
+## v2 Requirements
+
+### Position Presets
+
+- **POS-01**: User can save current position to a preset slot
+- **POS-02**: User can recall a saved preset position
+- **POS-03**: Presets persist across reboots (NVS storage)
+
+### Configuration
+
+- **CFG-01**: User can invert axis direction via OSC
+- **CFG-02**: User can configure axis limits via OSC
+- **CFG-03**: Configuration persists across reboots (NVS storage)
+
+### Feedback
+
+- **FB-05**: Firmware sends current step positions per axis via OSC
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Gamepad / Bluetooth input | Replaced by OSC from Companion |
+| WebSocket API | Replaced by pure OSC |
+| Multi-client arbitration | Single OSC source assumed |
+| Web UI dashboard | Companion is the control surface |
+| Position presets | No encoders yet — deferred to v2 |
+| Homing / limit switches | No hardware support |
+| Ethernet connectivity | WiFi only for this hardware |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| PLAT-01 | — | Pending |
+| PLAT-02 | — | Pending |
+| PLAT-03 | — | Pending |
+| PLAT-04 | — | Pending |
+| PLAT-05 | — | Pending |
+| MOT-01 | — | Pending |
+| MOT-02 | — | Pending |
+| MOT-03 | — | Pending |
+| MOT-04 | — | Pending |
+| MOT-05 | — | Pending |
+| MOT-06 | — | Pending |
+| MOT-07 | — | Pending |
+| SPD-01 | — | Pending |
+| SPD-02 | — | Pending |
+| SPD-03 | — | Pending |
+| NET-01 | — | Pending |
+| NET-02 | — | Pending |
+| NET-03 | — | Pending |
+| NET-04 | — | Pending |
+| NET-05 | — | Pending |
+| FB-01 | — | Pending |
+| FB-02 | — | Pending |
+| FB-03 | — | Pending |
+| FB-04 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 24 total
+- Mapped to phases: 0
+- Unmapped: 24 ⚠️
+
+---
+*Requirements defined: 2026-04-03*
+*Last updated: 2026-04-03 after initial definition*
