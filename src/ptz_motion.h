@@ -1,54 +1,25 @@
 #pragma once
-
-#include <AccelStepper.h>
+#include "FastAccelStepper.h"
 
 namespace ptz {
 
-struct MotionState {
-  float panPos;
-  float tiltPos;
-  float zoomPos;
-  float panTarget;
-  float tiltTarget;
-  float zoomTarget;
-};
-
 class PtzMotion {
  public:
-  PtzMotion();
-
   void begin();
-  void update(float dtSeconds);
-  void run();
-
   void setVelocity(float panNorm, float tiltNorm, float zoomNorm);
-  void moveTo(float panSteps, float tiltSteps, float zoomSteps);
   void stop();
-
-  void setEnabled(bool enabled);
-  bool enabled() const;
   bool isMoving();
-
-  MotionState state();
+  int32_t panPosition();
+  int32_t tiltPosition();
+  int32_t zoomPosition();
 
  private:
-  AccelStepper pan_;
-  AccelStepper tilt_;
-  AccelStepper zoom_;
+  void setAxisVelocity(FastAccelStepper* stepper, float norm, float maxSps);
 
-  float panTarget_ = 0.0f;
-  float tiltTarget_ = 0.0f;
-  float zoomTarget_ = 0.0f;
-
-  float panVelocity_ = 0.0f;
-  float tiltVelocity_ = 0.0f;
-  float zoomVelocity_ = 0.0f;
-
-  float panVelocityCmd_ = 0.0f;
-  float tiltVelocityCmd_ = 0.0f;
-  float zoomVelocityCmd_ = 0.0f;
-
-  bool outputsEnabled_ = false;
+  FastAccelStepperEngine engine_;
+  FastAccelStepper* pan_ = nullptr;
+  FastAccelStepper* tilt_ = nullptr;
+  FastAccelStepper* zoom_ = nullptr;
 };
 
-} // namespace ptz
+}  // namespace ptz

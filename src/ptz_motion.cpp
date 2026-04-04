@@ -1,148 +1,86 @@
 #include "ptz_motion.h"
-
 #include <Arduino.h>
 #include <math.h>
-
 #include "ptz_config.h"
+#include "ptz_log.h"
 
 namespace ptz {
 
-PtzMotion::PtzMotion()
-    : pan_(AccelStepper::DRIVER, kPanStepPin, kPanDirPin),
-      tilt_(AccelStepper::DRIVER, kTiltStepPin, kTiltDirPin),
-      zoom_(AccelStepper::DRIVER, kZoomStepPin, kZoomDirPin) {}
-
 void PtzMotion::begin() {
-  pan_.setMaxSpeed(kPanMaxSps);
-  pan_.setAcceleration(kPanAccel);
-  pan_.setEnablePin(kPanEnPin);
-  pan_.setPinsInverted(false, false, true);
+  engine_.init();
 
-  tilt_.setMaxSpeed(kTiltMaxSps);
-  tilt_.setAcceleration(kTiltAccel);
-  tilt_.setEnablePin(kTiltEnPin);
-  tilt_.setPinsInverted(false, false, true);
+  pan_ = engine_.stepperConnectToPin(kPanStepPin);
+  if (!pan_) { PTZ_LOGE("MOTION", "Failed to init pan stepper"); return; }
+  pan_->setDirectionPin(kPanDirPin, !kInvertPan);
+  pan_->setEnablePin(kPanEnPin, true);
+  pan_->setAutoEnable(true);
+  pan_->setDelayToDisable(500);
+  pan_->setAcceleration(static_cast<int32_t>(kPanAccel));
 
-  zoom_.setMaxSpeed(kZoomMaxSps);
-  zoom_.setAcceleration(kZoomAccel);
-  zoom_.setEnablePin(kZoomEnPin);
-  zoom_.setPinsInverted(false, false, true);
+  tilt_ = engine_.stepperConnectToPin(kTiltStepPin);
+  if (!tilt_) { PTZ_LOGE("MOTION", "Failed to init tilt stepper"); return; }
+  tilt_->setDirectionPin(kTiltDirPin);
+  tilt_->setEnablePin(kTiltEnPin, true);
+  tilt_->setAutoEnable(true);
+  tilt_->setDelayToDisable(500);
+  tilt_->setAcceleration(static_cast<int32_t>(kTiltAccel));
 
-  setEnabled(false);
+  zoom_ = engine_.stepperConnectToPin(kZoomStepPin);
+  if (!zoom_) { PTZ_LOGE("MOTION", "Failed to init zoom stepper"); return; }
+  zoom_->setDirectionPin(kZoomDirPin);
+  zoom_->setEnablePin(kZoomEnPin, true);
+  zoom_->setAutoEnable(true);
+  zoom_->setDelayToDisable(500);
+  zoom_->setAcceleration(static_cast<int32_t>(kZoomAccel));
+
+  PTZ_LOGI("MOTION", "3-axis FastAccelStepper initialized");
 }
 
-void PtzMotion::update(float dtSeconds) {
-  const float panMaxDelta = kPanSlewSps2 * dtSeconds;
-  const float tiltMaxDelta = kTiltSlewSps2 * dtSeconds;
-  const float zoomMaxDelta = kZoomSlewSps2 * dtSeconds;
-
-  const float panDelta = panVelocityCmd_ - panVelocity_;
-  const float tiltDelta = tiltVelocityCmd_ - tiltVelocity_;
-  const float zoomDelta = zoomVelocityCmd_ - zoomVelocity_;
-
-  if (panDelta > panMaxDelta) {
-    panVelocity_ += panMaxDelta;
-  } else if (panDelta < -panMaxDelta) {
-    panVelocity_ -= panMaxDelta;
-  } else {
-    panVelocity_ = panVelocityCmd_;
+void PtzMotion::setAxisVelocity(FastAccelStepper* stepper, float norm, float maxSps) {
+  if (!stepper) return;
+  if (fabsf(norm) < 0.001f) {
+    stepper->stopMove();
+    return;
   }
-
-  if (tiltDelta > tiltMaxDelta) {
-    tiltVelocity_ += tiltMaxDelta;
-  } else if (tiltDelta < -tiltMaxDelta) {
-    tiltVelocity_ -= tiltMaxDelta;
+  uint32_t speedHz = static_cast<uint32_t>(fabsf(norm) * maxSps);
+  if (speedHz < 1) speedHz = 1;
+  stepper->setSpeedInHz(speedHz);
+  stepper->applySpeedAcceleration();
+  if (norm > 0.0f) {
+    stepper->runForward();
   } else {
-    tiltVelocity_ = tiltVelocityCmd_;
+    stepper->runBackward();
   }
-
-  if (zoomDelta > zoomMaxDelta) {
-    zoomVelocity_ += zoomMaxDelta;
-  } else if (zoomDelta < -zoomMaxDelta) {
-    zoomVelocity_ -= zoomMaxDelta;
-  } else {
-    zoomVelocity_ = zoomVelocityCmd_;
-  }
-
-  panTarget_ += panVelocity_ * dtSeconds;
-  tiltTarget_ += tiltVelocity_ * dtSeconds;
-  zoomTarget_ += zoomVelocity_ * dtSeconds;
-
-  pan_.moveTo(lroundf(panTarget_));
-  tilt_.moveTo(lroundf(tiltTarget_));
-  zoom_.moveTo(lroundf(zoomTarget_));
-}
-
-void PtzMotion::run() {
-  pan_.run();
-  tilt_.run();
-  zoom_.run();
 }
 
 void PtzMotion::setVelocity(float panNorm, float tiltNorm, float zoomNorm) {
-  panVelocityCmd_ = panNorm * kPanMaxSps;
-  tiltVelocityCmd_ = tiltNorm * kTiltMaxSps;
-  zoomVelocityCmd_ = zoomNorm * kZoomMaxSps;
-}
-
-void PtzMotion::moveTo(float panSteps, float tiltSteps, float zoomSteps) {
-  panTarget_ = panSteps;
-  tiltTarget_ = tiltSteps;
-  zoomTarget_ = zoomSteps;
-
-  pan_.moveTo(lroundf(panTarget_));
-  tilt_.moveTo(lroundf(tiltTarget_));
-  zoom_.moveTo(lroundf(zoomTarget_));
+  setAxisVelocity(pan_, panNorm, kPanMaxSps);
+  setAxisVelocity(tilt_, tiltNorm, kTiltMaxSps);
+  setAxisVelocity(zoom_, zoomNorm, kZoomMaxSps);
 }
 
 void PtzMotion::stop() {
-  panTarget_ = static_cast<float>(pan_.currentPosition());
-  tiltTarget_ = static_cast<float>(tilt_.currentPosition());
-  zoomTarget_ = static_cast<float>(zoom_.currentPosition());
-
-  panVelocity_ = 0.0f;
-  tiltVelocity_ = 0.0f;
-  zoomVelocity_ = 0.0f;
-  panVelocityCmd_ = 0.0f;
-  tiltVelocityCmd_ = 0.0f;
-  zoomVelocityCmd_ = 0.0f;
-
-  pan_.moveTo(lroundf(panTarget_));
-  tilt_.moveTo(lroundf(tiltTarget_));
-  zoom_.moveTo(lroundf(zoomTarget_));
-}
-
-void PtzMotion::setEnabled(bool enabled) {
-  outputsEnabled_ = enabled;
-  if (enabled) {
-    pan_.enableOutputs();
-    tilt_.enableOutputs();
-    zoom_.enableOutputs();
-  } else {
-    pan_.disableOutputs();
-    tilt_.disableOutputs();
-    zoom_.disableOutputs();
-  }
-}
-
-bool PtzMotion::enabled() const {
-  return outputsEnabled_;
+  if (pan_) pan_->stopMove();
+  if (tilt_) tilt_->stopMove();
+  if (zoom_) zoom_->stopMove();
 }
 
 bool PtzMotion::isMoving() {
-  return pan_.distanceToGo() != 0 || tilt_.distanceToGo() != 0 || zoom_.distanceToGo() != 0;
+  return (pan_ && pan_->isRunning()) ||
+         (tilt_ && tilt_->isRunning()) ||
+         (zoom_ && zoom_->isRunning());
 }
 
-MotionState PtzMotion::state() {
-  MotionState state{
-      static_cast<float>(pan_.currentPosition()),
-      static_cast<float>(tilt_.currentPosition()),
-      static_cast<float>(zoom_.currentPosition()),
-      panTarget_,
-      tiltTarget_,
-      zoomTarget_,
-  };
-  return state;
+int32_t PtzMotion::panPosition() {
+  return pan_ ? pan_->getCurrentPosition() : 0;
 }
 
-} // namespace ptz
+int32_t PtzMotion::tiltPosition() {
+  return tilt_ ? tilt_->getCurrentPosition() : 0;
+}
+
+int32_t PtzMotion::zoomPosition() {
+  return zoom_ ? zoom_->getCurrentPosition() : 0;
+}
+
+}  // namespace ptz
