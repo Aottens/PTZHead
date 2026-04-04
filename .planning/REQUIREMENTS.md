@@ -7,10 +7,10 @@
 
 ### Platform
 
-- [ ] **PLAT-01**: Firmware builds on standard espressif32 Arduino framework (no Bluepad32 patched core)
-- [ ] **PLAT-02**: Bluepad32 gamepad module is fully removed
-- [ ] **PLAT-03**: WebSocket API module is fully removed
-- [ ] **PLAT-04**: Ownership arbitration module is fully removed
+- [x] **PLAT-01**: Firmware builds on standard espressif32 Arduino framework (no Bluepad32 patched core)
+- [x] **PLAT-02**: Bluepad32 gamepad module is fully removed
+- [x] **PLAT-03**: WebSocket API module is fully removed
+- [x] **PLAT-04**: Ownership arbitration module is fully removed
 - [ ] **PLAT-05**: Main loop is simplified for single-source OSC input
 
 ### Motion Control
@@ -78,10 +78,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | Phase 1 | Pending |
-| PLAT-02 | Phase 1 | Pending |
-| PLAT-03 | Phase 1 | Pending |
-| PLAT-04 | Phase 1 | Pending |
+| PLAT-01 | Phase 1 | Complete |
+| PLAT-02 | Phase 1 | Complete |
+| PLAT-03 | Phase 1 | Complete |
+| PLAT-04 | Phase 1 | Complete |
 | PLAT-05 | Phase 1 | Pending |
 | MOT-01 | Phase 2 | Pending |
 | MOT-02 | Phase 2 | Pending |
