@@ -27,10 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Firmware boots, connects to WiFi via WiFiManager, and motors can be driven from the main loop (existing AccelStepper test)
   3. No references to Bluepad32, WebSocket, or ownership modules remain in the source tree
   4. Main loop is simplified to a single-source structure ready for OSC input (no gamepad/WebSocket dispatch logic)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Strip legacy modules, migrate platformio.ini to standard espressif32, clean config
+- [ ] 01-02-PLAN.md — Rewrite ptz_motion for FastAccelStepper, add serial test commands, hardware verify
 
 ### Phase 2: Network and Core OSC Control
 **Goal**: A user holding a Companion button drives the PTZ head via OSC over WiFi with smooth acceleration and configurable speed presets
@@ -68,6 +69,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Platform Migration and Cleanup | 0/? | Not started | - |
+| 1. Platform Migration and Cleanup | 0/2 | Not started | - |
 | 2. Network and Core OSC Control | 0/? | Not started | - |
 | 3. Feedback and Discovery | 0/? | Not started | - |
