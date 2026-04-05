@@ -31,6 +31,23 @@ constexpr float kZoomAccel = 15000.0f;
 constexpr uint16_t kOscPort = 8000;
 constexpr uint32_t kHeartbeatTimeoutMs = 500;
 
+// --- OSC Feedback (Phase 3) ---
+constexpr uint32_t kFeedbackPeriodMs = 1000;  // 1s periodic snapshot cadence
+
+// Feedback OSC addresses (all payloads are int32 'i' type tag — FB-04)
+constexpr const char* kOscAddrPanMoving  = "/ptz/status/pan/moving";
+constexpr const char* kOscAddrTiltMoving = "/ptz/status/tilt/moving";
+constexpr const char* kOscAddrZoomMoving = "/ptz/status/zoom/moving";
+constexpr const char* kOscAddrPreset     = "/ptz/status/preset";
+constexpr const char* kOscAddrRssi       = "/ptz/status/rssi";
+
+// --- mDNS (Phase 3, NET-03) ---
+constexpr const char* kMdnsHostname     = "ptzhead";   // resolves as ptzhead.local
+constexpr const char* kMdnsInstanceName = "PTZHead";   // Bonjour browser display name
+constexpr const char* kMdnsServiceType  = "_osc";      // mDNS service type
+constexpr const char* kMdnsServiceProto = "_udp";      // mDNS service protocol
+// NB: mDNS service port is kOscPort (8000), declared above.
+
 // --- Speed presets ---
 struct SpeedPreset {
   float panScale;     // multiplier on kPanMaxSps
@@ -76,7 +93,9 @@ enum LogRateId : uint8_t {
   kLogRateOscParseError = 4,
   kLogRateWifiReconnect = 5,
   kLogRateHeapFree = 6,
-  kLogRateCount = 7
+  kLogRateFeedbackTx = 7,
+  kLogRateMdns = 8,
+  kLogRateCount = 9
 };
 
 }  // namespace ptz
