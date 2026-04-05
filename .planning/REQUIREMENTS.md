@@ -15,13 +15,13 @@
 
 ### Motion Control
 
-- [ ] **MOT-01**: User can control pan axis velocity via OSC (`/ptz/pan`)
-- [ ] **MOT-02**: User can control tilt axis velocity via OSC (`/ptz/tilt`)
-- [ ] **MOT-03**: User can control zoom axis velocity via OSC (`/ptz/zoom`)
-- [ ] **MOT-04**: User can stop a single axis via OSC (`/ptz/pan/stop`, etc.)
-- [ ] **MOT-05**: User can stop all axes via OSC (`/ptz/stop`)
+- [x] **MOT-01**: User can control pan axis velocity via OSC (`/ptz/pan`)
+- [x] **MOT-02**: User can control tilt axis velocity via OSC (`/ptz/tilt`)
+- [x] **MOT-03**: User can control zoom axis velocity via OSC (`/ptz/zoom`)
+- [x] **MOT-04**: User can stop a single axis via OSC (`/ptz/pan/stop`, etc.)
+- [x] **MOT-05**: User can stop all axes via OSC (`/ptz/stop`)
 - [x] **MOT-06**: Motors accelerate and decelerate smoothly (existing AccelStepper behavior)
-- [ ] **MOT-07**: Firmware auto-stops all axes if no OSC command received within heartbeat timeout (watchdog)
+- [x] **MOT-07**: Firmware auto-stops all axes if no OSC command received within heartbeat timeout (watchdog)
 
 ### Speed Presets
 
@@ -83,13 +83,13 @@
 | PLAT-03 | Phase 1 | Complete |
 | PLAT-04 | Phase 1 | Complete |
 | PLAT-05 | Phase 1 | Pending |
-| MOT-01 | Phase 2 | Pending |
-| MOT-02 | Phase 2 | Pending |
-| MOT-03 | Phase 2 | Pending |
-| MOT-04 | Phase 2 | Pending |
-| MOT-05 | Phase 2 | Pending |
+| MOT-01 | Phase 2 | Complete |
+| MOT-02 | Phase 2 | Complete |
+| MOT-03 | Phase 2 | Complete |
+| MOT-04 | Phase 2 | Complete |
+| MOT-05 | Phase 2 | Complete |
 | MOT-06 | Phase 2 | Complete |
-| MOT-07 | Phase 2 | Pending |
+| MOT-07 | Phase 2 | Complete |
 | SPD-01 | Phase 2 | Complete |
 | SPD-02 | Phase 2 | Complete |
 | SPD-03 | Phase 2 | Complete |

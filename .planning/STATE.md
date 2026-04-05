@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-04-05T08:50:19.053Z"
+status: phase-complete
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-04-05T08:54:34.446Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 ## Current Position
 
-Phase: 02 (network-and-core-osc-control) — EXECUTING
-Plan: 3 of 3
+Phase: 02 (network-and-core-osc-control) — COMPLETE
+Plan: 3 of 3 (all plans complete)
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Plan: 3 of 3
 | Phase 02 P01 | 2min | 2 tasks | 2 files |
 | Phase 02 P02 | 1min | 2 tasks | 2 files |
 | Phase 02 P02 | 1min | 2 tasks | 2 files |
+| Phase 02 P03 | 2min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 02]: Speed preset scaling 25/60/100% paired with accel 5000/12000/20000 steps/s^2
 - [Phase 02]: Default preset index = 1 (medium) at boot
 - [Phase 02]: Event-driven WiFi reconnect over task/polling loop
+- [Phase 02]: CNMAT/OSC sourced via GitHub tag (3.5.8); registry only has v1.0.0
+- [Phase 02]: Heartbeat watchdog gated on PtzMotion::isMoving() to keep idle device silent
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-05T08:50:19.051Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-04-05T08:54:34.444Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None
