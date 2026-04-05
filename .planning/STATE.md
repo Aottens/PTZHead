@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 03-feedback-and-discovery-01-PLAN.md
-last_updated: "2026-04-05T18:49:12.529Z"
+stopped_at: Completed 03-feedback-and-discovery-03-PLAN.md
+last_updated: "2026-04-05T18:52:06.109Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 ## Current Position
 
-Phase: 03 (feedback-and-discovery) — EXECUTING
-Plan: 2 of 3
+Phase: 03 (feedback-and-discovery) — COMPLETE
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Plan: 2 of 3
 | Phase 02 P02 | 1min | 2 tasks | 2 files |
 | Phase 02 P03 | 2min | 3 tasks | 4 files |
 | Phase 03-feedback-and-discovery P01 | 3min | 2 tasks | 3 files |
+| Phase 03-feedback-and-discovery P03 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,7 @@ Recent decisions affecting current work:
 - [Phase 02]: CNMAT/OSC sourced via GitHub tag (3.5.8); registry only has v1.0.0
 - [Phase 02]: Heartbeat watchdog gated on PtzMotion::isMoving() to keep idle device silent
 - [Phase 03-feedback-and-discovery]: Aggregate isMoving() delegates to per-axis OR; isMoving() upgraded to const
+- [Phase 03-feedback-and-discovery]: mDNS lifecycle bound to GOT_IP event (not setup()); end() before begin() idempotently recovers from stuck responder
 
 ### Pending Todos
 
@@ -86,7 +88,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-05T18:49:12.527Z
-Stopped at: Completed 03-feedback-and-discovery-01-PLAN.md
+Last session: 2026-04-05T18:52:06.108Z
+Stopped at: Completed 03-feedback-and-discovery-03-PLAN.md
 Resume file: None
 Next action: /gsd:plan-phase 3
