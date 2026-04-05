@@ -47,9 +47,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Wave 1: Add OSC/heartbeat/preset constants + LogRateIds to ptz_config.h; harden WiFi (WIFI_PS_NONE, event-driven reconnect)
-- [ ] 02-02-PLAN.md — Wave 1: Extend PtzMotion with per-axis setters, per-axis stops, and applySpeedPreset(idx) scaling max-sps + acceleration
-- [ ] 02-03-PLAN.md — Wave 2: Create ptz_osc module (CNMAT dispatch, WiFiUDP, drain-all-packets); wire main loop with 500ms heartbeat watchdog
+- [x] 02-01-PLAN.md — Wave 1: Add OSC/heartbeat/preset constants + LogRateIds to ptz_config.h; harden WiFi (WIFI_PS_NONE, event-driven reconnect)
+- [x] 02-02-PLAN.md — Wave 1: Extend PtzMotion with per-axis setters, per-axis stops, and applySpeedPreset(idx) scaling max-sps + acceleration
+- [x] 02-03-PLAN.md — Wave 2: Create ptz_osc module (CNMAT dispatch, WiFiUDP, drain-all-packets); wire main loop with 500ms heartbeat watchdog
 
 ### Phase 3: Feedback and Discovery
 **Goal**: Companion receives live status from the PTZ head (moving state, speed preset, signal strength) and the device is discoverable via mDNS
@@ -90,6 +90,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Platform Migration and Cleanup | 2/2 | Code-complete (HW verify deferred to Phase 4) | 2026-04-05 |
-| 2. Network and Core OSC Control | 0/? | Not started | - |
+| 2. Network and Core OSC Control | 3/3 | Complete | 2026-04-05 |
 | 3. Feedback and Discovery | 0/? | Not started | - |
 | 4. End-to-End Hardware Validation | 0/? | Not started | - |
