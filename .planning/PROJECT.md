@@ -20,11 +20,11 @@ Reliable, low-latency OSC control of a 3-axis PTZ head from Bitfocus Companion �
 - ✓ OSC command input for velocity control (hold-to-move with accel/decel) — Validated in Phase 2
 - ✓ OSC command input for stop (all axes or per-axis) — Validated in Phase 2
 - ✓ Speed/acceleration presets switchable via OSC — Validated in Phase 2
+- ✓ OSC status output (moving state, preset, RSSI) — Validated in Phase 3
+- ✓ mDNS advertisement (ptzhead.local) for network discovery — Validated in Phase 3
 
 ### Active
 
-- [ ] OSC status output (positions, moving state, connection info)
-- [ ] mDNS advertisement (e.g. ptzhead.local) for network discovery
 - [ ] Fixed IP fallback for manual Companion configuration
 - [ ] Remove Bluepad32 gamepad support entirely
 - [ ] Remove WebSocket API entirely
@@ -68,4 +68,4 @@ Reliable, low-latency OSC control of a 3-axis PTZ head from Bitfocus Companion �
 | mDNS + fixed IP for discovery | Zero-config with manual fallback | — Pending |
 
 ---
-*Last updated: 2026-04-05 after Phase 2 (network-and-core-osc-control) complete — end-to-end OSC control surface delivered*
+*Last updated: 2026-04-05 after Phase 3 (feedback-and-discovery) complete — OSC status feedback + mDNS discovery delivered*
