@@ -1,35 +1,36 @@
 {
   "version": "1.0",
-  "timestamp": "2026-04-05T09:02:53.317Z",
-  "phase": "3",
-  "phase_name": "Feedback and Discovery",
+  "timestamp": "2026-04-05T19:16:11.493Z",
+  "phase": "03",
+  "phase_name": "feedback-and-discovery",
   "phase_dir": ".planning/phases/03-feedback-and-discovery",
   "plan": null,
   "task": null,
-  "total_tasks": null,
-  "status": "paused",
-  "completed_tasks": [],
-  "remaining_tasks": [
-    {"id": 1, "name": "Answer gray-area questions for Phase 3 discuss-phase", "status": "not_started"},
-    {"id": 2, "name": "Write 03-CONTEXT.md capturing decisions", "status": "not_started"},
-    {"id": 3, "name": "Run /gsd:plan-phase 3", "status": "not_started"},
-    {"id": 4, "name": "Execute Phase 3 plans (feedback send path + mDNS)", "status": "not_started"}
+  "total_tasks": 6,
+  "status": "phase_complete",
+  "completed_tasks": [
+    {"id": "03-01", "name": "Foundations: isMoving accessors + constants", "status": "done", "commit": "4c50392"},
+    {"id": "03-02", "name": "OSC feedback TX path", "status": "done", "commit": "d1cb5f8"},
+    {"id": "03-03", "name": "mDNS discovery (ptzhead.local)", "status": "done", "commit": "4358040"}
   ],
-  "blockers": [
-    {"description": "Awaiting user answers on 4 gray areas before CONTEXT.md can be written", "type": "human_action", "workaround": "Resume discuss-phase and answer the 4 gray-area selection prompt"}
-  ],
+  "remaining_tasks": [],
+  "blockers": [],
   "human_actions_pending": [
-    {"action": "Select which of the 4 gray areas to discuss (or 'all')", "context": "Phase 3 discuss-phase was paused right after presenting gray areas", "blocking": true}
+    {"action": "Hardware verify: ptzhead.local resolves on first boot", "context": "Known edge case — GOT_IP may fire before handler registration in tryStoredCredentials", "blocking": false},
+    {"action": "Hardware verify: /ptz/status/pan|tilt|zoom/moving latency within one loop tick to Companion", "context": "Confirm on-change diff emission hits target responsiveness", "blocking": false},
+    {"action": "Hardware verify: /ptz/status/rssi emits ~1s while WiFi connected", "context": "Confirm 1s self-heal snapshot loop is running", "blocking": false}
   ],
   "decisions": [
-    {"decision": "Phase 3 scope confirmed: OSC status feedback (moving/preset/RSSI) + mDNS advertisement", "rationale": "Matches ROADMAP.md phase 3 goal and FB-01..FB-04 + NET-03 requirements", "phase": "3"},
-    {"decision": "Carry forward from Phase 2: CNMAT/OSC, UDP port 8000, integer-only feedback (FB-04), single Companion sender assumption, 500ms heartbeat untouched", "rationale": "Locked in prior CONTEXT.md; feedback must coexist with heartbeat without interfering", "phase": "3"}
+    {"decision": "ESPmDNS restart-on-GOT_IP pattern", "rationale": "Mitigates ESP32 mDNS 'silent after 2 minutes' bug (Pitfall 1)", "phase": "03"},
+    {"decision": "Sender captured BEFORE buffer drain in OSC RX", "rationale": "Pitfall 5 — prevents stale sender reference after parse", "phase": "03"},
+    {"decision": "1s self-heal snapshot in addition to on-change diff", "rationale": "Ensures Companion recovers state after reconnect/packet loss", "phase": "03"}
   ],
   "uncommitted_files": [
     ".planning/config.json",
     ".planning/phases/02-network-and-core-osc-control/02-CONTEXT.md",
+    ".planning/phases/03-feedback-and-discovery/03-CONTEXT.md",
     "PROJECT.md"
   ],
-  "next_action": "Re-enter /gsd:discuss-phase 3 and present the 4 gray areas: (1) feedback address schema, (2) send trigger/cadence, (3) reply target, (4) mDNS service details. Ask user which to discuss.",
-  "context_notes": "Mid-discuss-phase for Phase 3. Already loaded PROJECT.md, REQUIREMENTS.md, ROADMAP.md, Phase 2 CONTEXT.md, and scouted src/ (ptz_osc, ptz_config, main.cpp, ptz_wifi). Phase dir did not exist; created it during pause. Analysis concluded: reply-to-sender is the natural reply target (Phase 2 pre-decided this direction by deferring sender-IP caching). Integer-only FB-04 likely forces separate scalar addresses rather than bundled messages (Companion generic-osc prefers one scalar per address). No code changes this session — pure context gathering."
+  "next_action": "Run /gsd:plan-phase 4 (or /gsd:discuss-phase 4 first) to begin Phase 4: end-to-end-hardware-validation",
+  "context_notes": "Phase 3 complete at clean boundary. Verification passed 9/9 must-haves. FB-01..04 + NET-03 all satisfied. Firmware builds clean (Flash 69.7%, RAM 16.1%). Next phase is end-to-end-hardware-validation which will exercise the human verification items listed above on real hardware."
 }
