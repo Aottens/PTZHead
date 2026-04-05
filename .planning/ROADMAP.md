@@ -44,10 +44,12 @@ Plans:
   3. Sending `/ptz/speed/preset` switches the active speed/acceleration profile and the change is immediately observable in motor behavior
   4. WiFi reconnects automatically after a network drop without requiring a power cycle, and motors auto-stop when no OSC command is received within the heartbeat timeout
   5. WiFi power save is disabled and OSC command-to-motor-response latency is under 50ms
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Wave 1: Add OSC/heartbeat/preset constants + LogRateIds to ptz_config.h; harden WiFi (WIFI_PS_NONE, event-driven reconnect)
+- [ ] 02-02-PLAN.md — Wave 1: Extend PtzMotion with per-axis setters, per-axis stops, and applySpeedPreset(idx) scaling max-sps + acceleration
+- [ ] 02-03-PLAN.md — Wave 2: Create ptz_osc module (CNMAT dispatch, WiFiUDP, drain-all-packets); wire main loop with 500ms heartbeat watchdog
 
 ### Phase 3: Feedback and Discovery
 **Goal**: Companion receives live status from the PTZ head (moving state, speed preset, signal strength) and the device is discoverable via mDNS
