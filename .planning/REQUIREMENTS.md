@@ -20,14 +20,14 @@
 - [ ] **MOT-03**: User can control zoom axis velocity via OSC (`/ptz/zoom`)
 - [ ] **MOT-04**: User can stop a single axis via OSC (`/ptz/pan/stop`, etc.)
 - [ ] **MOT-05**: User can stop all axes via OSC (`/ptz/stop`)
-- [ ] **MOT-06**: Motors accelerate and decelerate smoothly (existing AccelStepper behavior)
+- [x] **MOT-06**: Motors accelerate and decelerate smoothly (existing AccelStepper behavior)
 - [ ] **MOT-07**: Firmware auto-stops all axes if no OSC command received within heartbeat timeout (watchdog)
 
 ### Speed Presets
 
-- [ ] **SPD-01**: User can switch between at least 3 speed/acceleration presets via OSC
-- [ ] **SPD-02**: Speed presets affect max velocity and acceleration for all axes
-- [ ] **SPD-03**: Active speed preset persists until changed (not per-command)
+- [x] **SPD-01**: User can switch between at least 3 speed/acceleration presets via OSC
+- [x] **SPD-02**: Speed presets affect max velocity and acceleration for all axes
+- [x] **SPD-03**: Active speed preset persists until changed (not per-command)
 
 ### Network
 
@@ -88,11 +88,11 @@
 | MOT-03 | Phase 2 | Pending |
 | MOT-04 | Phase 2 | Pending |
 | MOT-05 | Phase 2 | Pending |
-| MOT-06 | Phase 2 | Pending |
+| MOT-06 | Phase 2 | Complete |
 | MOT-07 | Phase 2 | Pending |
-| SPD-01 | Phase 2 | Pending |
-| SPD-02 | Phase 2 | Pending |
-| SPD-03 | Phase 2 | Pending |
+| SPD-01 | Phase 2 | Complete |
+| SPD-02 | Phase 2 | Complete |
+| SPD-03 | Phase 2 | Complete |
 | NET-01 | Phase 2 | Complete |
 | NET-02 | Phase 2 | Complete |
 | NET-03 | Phase 3 | Pending |
