@@ -31,11 +31,11 @@
 
 ### Network
 
-- [ ] **NET-01**: Firmware connects to WiFi using stored credentials via WiFiManager captive portal
-- [ ] **NET-02**: WiFi power save is disabled for sub-50ms OSC response latency
+- [x] **NET-01**: Firmware connects to WiFi using stored credentials via WiFiManager captive portal
+- [x] **NET-02**: WiFi power save is disabled for sub-50ms OSC response latency
 - [ ] **NET-03**: Firmware advertises via mDNS as `ptzhead.local` with `_osc._udp` service
-- [ ] **NET-04**: Firmware listens for OSC on a configurable UDP port
-- [ ] **NET-05**: Firmware reconnects to WiFi automatically on disconnect (non-blocking, event-based)
+- [x] **NET-04**: Firmware listens for OSC on a configurable UDP port
+- [x] **NET-05**: Firmware reconnects to WiFi automatically on disconnect (non-blocking, event-based)
 
 ### OSC Feedback
 
@@ -93,11 +93,11 @@
 | SPD-01 | Phase 2 | Pending |
 | SPD-02 | Phase 2 | Pending |
 | SPD-03 | Phase 2 | Pending |
-| NET-01 | Phase 2 | Pending |
-| NET-02 | Phase 2 | Pending |
+| NET-01 | Phase 2 | Complete |
+| NET-02 | Phase 2 | Complete |
 | NET-03 | Phase 3 | Pending |
-| NET-04 | Phase 2 | Pending |
-| NET-05 | Phase 2 | Pending |
+| NET-04 | Phase 2 | Complete |
+| NET-05 | Phase 2 | Complete |
 | FB-01 | Phase 3 | Pending |
 | FB-02 | Phase 3 | Pending |
 | FB-03 | Phase 3 | Pending |

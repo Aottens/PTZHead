@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase-1-complete
-stopped_at: Phase 01 code-complete; advancing to Phase 02
-last_updated: "2026-04-05T08:00:06.957Z"
+status: unknown
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-04-05T08:47:11.848Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 5
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,13 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-03)
 
 **Core value:** Reliable, low-latency OSC control of a 3-axis PTZ head from Bitfocus Companion
-**Current focus:** Phase 01 — platform-migration-and-cleanup
+**Current focus:** Phase 02 — network-and-core-osc-control
 
 ## Current Position
 
-Phase: 01 (platform-migration-and-cleanup) — CODE-COMPLETE (hardware verify deferred to Phase 04)
-Plan: 2 of 2 complete
-Next: Phase 02 (Network and Core OSC Control)
+Phase: 02 (network-and-core-osc-control) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -48,6 +47,7 @@ Next: Phase 02 (Network and Core OSC Control)
 
 *Updated after each plan completion*
 | Phase 01 P01 | 2min | 2 tasks | 9 files |
+| Phase 02 P01 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -62,6 +62,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Reduce kLogRateCount from 8 to 4, removing legacy WebSocket/Gamepad/Owner log rate entries
 - [Phase 01]: FastAccelStepper chosen over AccelStepper (ISR-driven, no polling)
 - [Roadmap]: Added Phase 04 (End-to-End Hardware Validation) — consolidates all hardware testing into one phase, deferred from Phase 01 task 3
+- [Phase 02]: Speed preset scaling 25/60/100% paired with accel 5000/12000/20000 steps/s^2
+- [Phase 02]: Default preset index = 1 (medium) at boot
+- [Phase 02]: Event-driven WiFi reconnect over task/polling loop
 
 ### Pending Todos
 
@@ -76,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-05T08:00:06.957Z
-Stopped at: Phase 01 code-complete; Phase 04 added for deferred hardware validation
+Last session: 2026-04-05T08:47:11.847Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
