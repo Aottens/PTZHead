@@ -33,6 +33,7 @@ void PtzMotion::begin() {
   zoom_->setDelayToDisable(500);
   zoom_->setAcceleration(static_cast<int32_t>(kZoomAccel));
 
+  applySpeedPreset(kDefaultPresetIndex);
   PTZ_LOGI("MOTION", "3-axis FastAccelStepper initialized");
 }
 
@@ -54,9 +55,62 @@ void PtzMotion::setAxisVelocity(FastAccelStepper* stepper, float norm, float max
 }
 
 void PtzMotion::setVelocity(float panNorm, float tiltNorm, float zoomNorm) {
-  setAxisVelocity(pan_, panNorm, kPanMaxSps);
-  setAxisVelocity(tilt_, tiltNorm, kTiltMaxSps);
-  setAxisVelocity(zoom_, zoomNorm, kZoomMaxSps);
+  setAxisVelocity(pan_, panNorm, panMaxSpsEff_);
+  setAxisVelocity(tilt_, tiltNorm, tiltMaxSpsEff_);
+  setAxisVelocity(zoom_, zoomNorm, zoomMaxSpsEff_);
+}
+
+void PtzMotion::setPanVelocity(float norm) {
+  setAxisVelocity(pan_, norm, panMaxSpsEff_);
+}
+
+void PtzMotion::setTiltVelocity(float norm) {
+  setAxisVelocity(tilt_, norm, tiltMaxSpsEff_);
+}
+
+void PtzMotion::setZoomVelocity(float norm) {
+  setAxisVelocity(zoom_, norm, zoomMaxSpsEff_);
+}
+
+void PtzMotion::stopPan() {
+  if (pan_) pan_->stopMove();
+}
+
+void PtzMotion::stopTilt() {
+  if (tilt_) tilt_->stopMove();
+}
+
+void PtzMotion::stopZoom() {
+  if (zoom_) zoom_->stopMove();
+}
+
+void PtzMotion::applySpeedPreset(uint8_t idx) {
+  if (idx >= kPresetCount) {
+    PTZ_LOGW("MOTION", "preset idx %u out of range, using default", idx);
+    idx = kDefaultPresetIndex;
+  }
+  const SpeedPreset& p = kSpeedPresets[idx];
+  activePreset_ = idx;
+
+  panMaxSpsEff_  = kPanMaxSps  * p.panScale;
+  tiltMaxSpsEff_ = kTiltMaxSps * p.tiltScale;
+  zoomMaxSpsEff_ = kZoomMaxSps * p.zoomScale;
+
+  if (pan_) {
+    pan_->setAcceleration(static_cast<int32_t>(p.panAccel));
+    if (pan_->isRunning()) pan_->applySpeedAcceleration();
+  }
+  if (tilt_) {
+    tilt_->setAcceleration(static_cast<int32_t>(p.tiltAccel));
+    if (tilt_->isRunning()) tilt_->applySpeedAcceleration();
+  }
+  if (zoom_) {
+    zoom_->setAcceleration(static_cast<int32_t>(p.zoomAccel));
+    if (zoom_->isRunning()) zoom_->applySpeedAcceleration();
+  }
+
+  PTZ_LOGI("MOTION", "preset=%u maxSps pan=%.0f tilt=%.0f zoom=%.0f",
+           idx, panMaxSpsEff_, tiltMaxSpsEff_, zoomMaxSpsEff_);
 }
 
 void PtzMotion::stop() {
