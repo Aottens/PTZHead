@@ -3,6 +3,7 @@
 #include <WiFi.h>
 #include <WiFiManager.h>
 #include <esp_wifi.h>
+#include <ESPmDNS.h>
 
 #include "ptz_config.h"
 #include "ptz_log.h"
@@ -31,9 +32,23 @@ static void registerWifiEventHandlers() {
 
   WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
     PTZ_LOGI("WIFI", "GOT_IP %s", WiFi.localIP().toString().c_str());
-    // Re-apply power save = off after reconnect (Pitfall 1)
+    // Re-apply power save = off after reconnect (Pitfall 1 from Phase 2)
     WiFi.setSleep(false);
     esp_wifi_set_ps(WIFI_PS_NONE);
+
+    // mDNS: tear down any prior instance, then restart fresh (Pitfall 1 — mDNS
+    // stops after ~2min on ESP32; restart-on-GOT_IP is the community fix).
+    MDNS.end();
+    if (MDNS.begin(kMdnsHostname)) {
+      MDNS.setInstanceName(kMdnsInstanceName);
+      MDNS.addService(kMdnsServiceType, kMdnsServiceProto, kOscPort);
+      if (logShouldEmit(kLogRateMdns, 5000)) {
+        PTZ_LOGI("MDNS", "advertising %s.local %s.%s:%u",
+                 kMdnsHostname, kMdnsServiceType, kMdnsServiceProto, kOscPort);
+      }
+    } else {
+      PTZ_LOGW("MDNS", "begin failed");
+    }
   }, ARDUINO_EVENT_WIFI_STA_GOT_IP);
 }
 
