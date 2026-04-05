@@ -67,6 +67,7 @@ void setup() {
 
 void loop() {
   g_osc.update();
+  g_osc.updateFeedback();
   handleSerialCommands();
 
   const uint32_t now = millis();
