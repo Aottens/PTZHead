@@ -20,6 +20,23 @@ static void printWifiStatus() {
   }
 }
 
+static void registerWifiEventHandlers() {
+  WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+    if (logShouldEmit(kLogRateWifiReconnect, 2000)) {
+      PTZ_LOGW("WIFI", "STA disconnected reason=%u, reconnecting",
+               info.wifi_sta_disconnected.reason);
+    }
+    WiFi.reconnect();
+  }, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+
+  WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+    PTZ_LOGI("WIFI", "GOT_IP %s", WiFi.localIP().toString().c_str());
+    // Re-apply power save = off after reconnect (Pitfall 1)
+    WiFi.setSleep(false);
+    esp_wifi_set_ps(WIFI_PS_NONE);
+  }, ARDUINO_EVENT_WIFI_STA_GOT_IP);
+}
+
 static void startProvisioningPortal(WiFiManager& wm) {
   PTZ_LOGI("WIFI", "Starting provisioning portal");
 
@@ -44,6 +61,7 @@ static void startProvisioningPortal(WiFiManager& wm) {
   if (ok && WiFi.status() == WL_CONNECTED) {
     PTZ_LOGI("WIFI", "Provisioning success");
     printWifiStatus();
+    registerWifiEventHandlers();
     return;
   }
 
@@ -56,8 +74,8 @@ static bool tryStoredCredentials() {
   PTZ_LOGI("WIFI", "Trying stored credentials");
 
   WiFi.mode(WIFI_STA);
-  WiFi.setSleep(true);
-  esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
+  WiFi.setSleep(false);
+  esp_wifi_set_ps(WIFI_PS_NONE);
 
   WiFi.begin();
 
@@ -66,6 +84,7 @@ static bool tryStoredCredentials() {
     if (WiFi.status() == WL_CONNECTED) {
       PTZ_LOGI("WIFI", "Connected via stored credentials");
       printWifiStatus();
+      registerWifiEventHandlers();
       return true;
     }
     if (logShouldEmit(kLogRateWifiProgress, 500)) {
