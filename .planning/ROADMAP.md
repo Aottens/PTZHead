@@ -60,10 +60,12 @@ Plans:
   2. Companion receives the active speed preset ID and WiFi RSSI as integer values for display in button text or variables
   3. All feedback values are integers (no floats) compatible with Companion generic-osc module
   4. Device advertises as `ptzhead.local` with `_osc._udp` service type and is resolvable from the local network
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Wave 1: Add per-axis isMoving() to PtzMotion + declare feedback/mDNS constants and LogRateIds in ptz_config.h
+- [ ] 03-02-PLAN.md — Wave 2: Extend PtzOsc with sender cache, sendScalarInt, updateFeedback() (on-change + 1s periodic snapshot), wire into main loop
+- [ ] 03-03-PLAN.md — Wave 2: Add ESPmDNS begin/end/addService lifecycle inside WiFi GOT_IP handler for ptzhead.local _osc._udp:8000
 
 ### Phase 4: End-to-End Hardware Validation
 **Goal**: Every feature built in Phases 1–3 is confirmed working on real ESP32 + stepper hardware; deferred Phase 1 checkpoint is closed and the device is declared bench-ready
