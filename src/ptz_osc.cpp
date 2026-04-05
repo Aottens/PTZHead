@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <WiFiUdp.h>
+#include <WiFi.h>
 #include <OSCMessage.h>
 
 #include "ptz_config.h"
@@ -109,6 +110,10 @@ void PtzOsc::begin(PtzMotion* motion) {
 void PtzOsc::update() {
   int size;
   while ((size = s_udp.parsePacket()) > 0) {
+    // Capture remote endpoint BEFORE draining the buffer (Pitfall 5).
+    IPAddress remoteIp = s_udp.remoteIP();
+    uint16_t  remotePort = s_udp.remotePort();
+
     OSCMessage msg;
     while (size--) msg.fill(s_udp.read());
     if (msg.hasError()) {
@@ -117,9 +122,59 @@ void PtzOsc::update() {
       }
       continue;
     }
-    lastRxMs_ = millis();
+    lastRxMs_ = millis();                  // RX-only — heartbeat owned
+    lastSenderIp_   = remoteIp;            // TX target for feedback
+    lastSenderPort_ = remotePort;
     dispatchAll(msg);
   }
+}
+
+void PtzOsc::sendScalarInt(const char* addr, int32_t value) {
+  if (!hasSender()) return;  // no RX yet — silently suppress (no broadcast fallback)
+  OSCMessage msg(addr);
+  msg.add(value);            // int32 → OSC 'i' type tag (FB-04)
+  s_udp.beginPacket(lastSenderIp_, lastSenderPort_);
+  msg.send(s_udp);
+  s_udp.endPacket();
+  msg.empty();               // CRITICAL: release CNMAT heap (Pitfall 2)
+}
+
+void PtzOsc::updateFeedback() {
+  if (!hasSender()) return;
+  if (WiFi.status() != WL_CONNECTED) return;  // Pitfall 4: RSSI invalid when down
+  if (!motion_) return;
+
+  const uint32_t now = millis();
+  const bool periodicTick = (now - lastFeedbackMs_) >= kFeedbackPeriodMs;
+
+  StatusSnapshot cur;
+  cur.panMoving  = motion_->isPanMoving()  ? 1 : 0;
+  cur.tiltMoving = motion_->isTiltMoving() ? 1 : 0;
+  cur.zoomMoving = motion_->isZoomMoving() ? 1 : 0;
+  cur.preset     = static_cast<int32_t>(motion_->activePreset());
+  cur.rssi       = static_cast<int32_t>(WiFi.RSSI());
+
+  // On-change emission: emit any field that flipped since last_.
+  if (cur.panMoving  != lastSent_.panMoving)  sendScalarInt(kOscAddrPanMoving,  cur.panMoving);
+  if (cur.tiltMoving != lastSent_.tiltMoving) sendScalarInt(kOscAddrTiltMoving, cur.tiltMoving);
+  if (cur.zoomMoving != lastSent_.zoomMoving) sendScalarInt(kOscAddrZoomMoving, cur.zoomMoving);
+  if (cur.preset     != lastSent_.preset)     sendScalarInt(kOscAddrPreset,     cur.preset);
+
+  // Periodic 1s snapshot: re-emit ALL five (self-heal + RSSI refresh).
+  if (periodicTick) {
+    sendScalarInt(kOscAddrPanMoving,  cur.panMoving);
+    sendScalarInt(kOscAddrTiltMoving, cur.tiltMoving);
+    sendScalarInt(kOscAddrZoomMoving, cur.zoomMoving);
+    sendScalarInt(kOscAddrPreset,     cur.preset);
+    sendScalarInt(kOscAddrRssi,       cur.rssi);
+    lastFeedbackMs_ = now;
+    if (logShouldEmit(kLogRateFeedbackTx, 2000)) {
+      PTZ_LOGI("FB", "snapshot pan=%d tilt=%d zoom=%d preset=%d rssi=%d",
+               cur.panMoving, cur.tiltMoving, cur.zoomMoving, cur.preset, cur.rssi);
+    }
+  }
+
+  lastSent_ = cur;
 }
 
 }  // namespace ptz
