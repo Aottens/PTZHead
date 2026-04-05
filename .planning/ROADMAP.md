@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap replaces the Bluepad32 gamepad + WebSocket architecture with pure OSC control from Bitfocus Companion. Phase 1 cleans house — removes legacy modules and migrates to the standard ESP32 framework. Phase 2 delivers the core value: WiFi-hardened, OSC-driven 3-axis motion with speed presets. Phase 3 closes the loop with status feedback to Companion and mDNS discovery. Every phase produces firmware that compiles, boots, and can be verified on hardware.
+This roadmap replaces the Bluepad32 gamepad + WebSocket architecture with pure OSC control from Bitfocus Companion. Phase 1 cleans house — removes legacy modules and migrates to the standard ESP32 framework. Phase 2 delivers the core value: WiFi-hardened, OSC-driven 3-axis motion with speed presets. Phase 3 closes the loop with status feedback to Companion and mDNS discovery. Phase 4 runs comprehensive end-to-end hardware validation of all features built in phases 1–3. Every phase produces firmware that compiles, boots, and can be verified on hardware.
 
 ## Phases
 
@@ -15,6 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Platform Migration and Cleanup** - Remove legacy modules, switch to standard espressif32 framework, validate baseline
 - [ ] **Phase 2: Network and Core OSC Control** - WiFi hardening, OSC command input, motor dispatch, speed presets
 - [ ] **Phase 3: Feedback and Discovery** - OSC status feedback to Companion, heartbeat watchdog, mDNS advertisement
+- [ ] **Phase 4: End-to-End Hardware Validation** - Flash, bench-test, and sign off on motion/OSC/feedback behavior on real hardware
 
 ## Phase Details
 
@@ -30,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Strip legacy modules, migrate platformio.ini to standard espressif32, clean config
-- [ ] 01-02-PLAN.md — Rewrite ptz_motion for FastAccelStepper, add serial test commands, hardware verify
+- [x] 01-01-PLAN.md — Strip legacy modules, migrate platformio.ini to standard espressif32, clean config
+- [x] 01-02-PLAN.md — Rewrite ptz_motion for FastAccelStepper, add serial test commands (hardware verify → Phase 4)
 
 ### Phase 2: Network and Core OSC Control
 **Goal**: A user holding a Companion button drives the PTZ head via OSC over WiFi with smooth acceleration and configurable speed presets
@@ -62,13 +63,31 @@ Plans:
 Plans:
 - [ ] 03-01: TBD
 
+### Phase 4: End-to-End Hardware Validation
+**Goal**: Every feature built in Phases 1–3 is confirmed working on real ESP32 + stepper hardware; deferred Phase 1 checkpoint is closed and the device is declared bench-ready
+**Depends on**: Phase 1, Phase 2, Phase 3
+**Requirements**: PLAT-05 (hardware verification, deferred from Phase 1), plus end-to-end validation of NET/MOT/SPD/FB requirements
+**Success Criteria** (what must be TRUE):
+  1. Firmware flashes cleanly via `pio run --target upload` and boots to `Setup complete` with WiFi connected (or captive portal on first boot)
+  2. Serial motor test commands drive all 3 axes correctly — direction matches expectation (`kInvertPan` validated), speed scales linearly with norm value, `STOP` decelerates smoothly, motors auto-disable ~500ms after stop
+  3. OSC commands from Companion (or any OSC sender) produce motor motion within the 50ms latency target on WiFi
+  4. Status feedback (axis moving flags, speed preset, RSSI) arrives at the OSC sender and updates in real time
+  5. WiFi survives a network drop and reconnects without a power cycle; heartbeat timeout triggers auto-stop
+  6. mDNS resolves `ptzhead.local` from another device on the network
+  7. Any hardware-specific issues found (pin polarity, timing, thermal, noise) are captured as fixes or documented constraints
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Platform Migration and Cleanup | 0/2 | Not started | - |
+| 1. Platform Migration and Cleanup | 2/2 | Code-complete (HW verify deferred to Phase 4) | 2026-04-05 |
 | 2. Network and Core OSC Control | 0/? | Not started | - |
 | 3. Feedback and Discovery | 0/? | Not started | - |
+| 4. End-to-End Hardware Validation | 0/? | Not started | - |

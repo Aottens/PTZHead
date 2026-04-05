@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-04-04T07:28:09.884Z"
+status: phase-1-complete
+stopped_at: Phase 01 code-complete; advancing to Phase 02
+last_updated: "2026-04-05T08:00:06.957Z"
 progress:
-  total_phases: 3
-  completed_phases: 0
+  total_phases: 4
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -23,8 +23,9 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 ## Current Position
 
-Phase: 01 (platform-migration-and-cleanup) — EXECUTING
-Plan: 2 of 2
+Phase: 01 (platform-migration-and-cleanup) — CODE-COMPLETE (hardware verify deferred to Phase 04)
+Plan: 2 of 2 complete
+Next: Phase 02 (Network and Core OSC Control)
 
 ## Performance Metrics
 
@@ -59,6 +60,8 @@ Recent decisions affecting current work:
 - [Research]: AccelStepper vs FastAccelStepper must be resolved via timing benchmark in Phase 1
 - [Phase 01]: Keep ptz_motion.h included but not driven in main.cpp -- Plan 02 replaces entirely
 - [Phase 01]: Reduce kLogRateCount from 8 to 4, removing legacy WebSocket/Gamepad/Owner log rate entries
+- [Phase 01]: FastAccelStepper chosen over AccelStepper (ISR-driven, no polling)
+- [Roadmap]: Added Phase 04 (End-to-End Hardware Validation) — consolidates all hardware testing into one phase, deferred from Phase 01 task 3
 
 ### Pending Todos
 
@@ -66,12 +69,13 @@ None yet.
 
 ### Blockers/Concerns
 
-- AccelStepper vs FastAccelStepper decision unresolved — needs timing spike in Phase 1 (research flag)
-- WiFi credential persistence across framework switch untested — verify NVS survives platform change
+- ~~AccelStepper vs FastAccelStepper decision~~ RESOLVED: FastAccelStepper chosen
+- WiFi credential persistence across framework switch untested — verify in Phase 04
 - CNMAT/OSC heap behavior needs monitoring during Phase 2 (research flag)
+- Phase 01 hardware verification deferred to Phase 04 — risks carried: pin polarity, speedHz accuracy, auto-disable timing, motor direction
 
 ## Session Continuity
 
-Last session: 2026-04-04T07:28:09.882Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-04-05T08:00:06.957Z
+Stopped at: Phase 01 code-complete; Phase 04 added for deferred hardware validation
 Resume file: None
