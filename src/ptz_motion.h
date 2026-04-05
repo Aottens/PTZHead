@@ -9,7 +9,10 @@ class PtzMotion {
   void begin();
   void setVelocity(float panNorm, float tiltNorm, float zoomNorm);
   void stop();
-  bool isMoving();
+  bool isMoving() const;
+  bool isPanMoving() const;
+  bool isTiltMoving() const;
+  bool isZoomMoving() const;
   int32_t panPosition();
   int32_t tiltPosition();
   int32_t zoomPosition();

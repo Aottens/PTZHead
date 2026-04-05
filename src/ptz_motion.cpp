@@ -119,10 +119,12 @@ void PtzMotion::stop() {
   if (zoom_) zoom_->stopMove();
 }
 
-bool PtzMotion::isMoving() {
-  return (pan_ && pan_->isRunning()) ||
-         (tilt_ && tilt_->isRunning()) ||
-         (zoom_ && zoom_->isRunning());
+bool PtzMotion::isPanMoving()  const { return pan_  && pan_->isRunning(); }
+bool PtzMotion::isTiltMoving() const { return tilt_ && tilt_->isRunning(); }
+bool PtzMotion::isZoomMoving() const { return zoom_ && zoom_->isRunning(); }
+
+bool PtzMotion::isMoving() const {
+  return isPanMoving() || isTiltMoving() || isZoomMoving();
 }
 
 int32_t PtzMotion::panPosition() {
