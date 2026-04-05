@@ -5,11 +5,13 @@
 #include "ptz_log.h"
 #include "ptz_motion.h"
 #include "ptz_wifi.h"
+#include "ptz_osc.h"
 
 namespace {
 
 ptz::PtzMotion g_motion;
 ptz::PtzWifi g_wifi;
+ptz::PtzOsc g_osc;
 
 void handleSerialCommands() {
   static String line;
@@ -58,10 +60,26 @@ void setup() {
 
   g_motion.begin();
   g_wifi.begin(false);
+  g_osc.begin(&g_motion);
 
-  PTZ_LOGI("BOOT", "Setup complete — serial commands: PAN/TILT/ZOOM <-1.0..1.0>, STOP, WIFI RESET");
+  PTZ_LOGI("BOOT", "Setup complete — OSC on UDP %u; serial: PAN/TILT/ZOOM, STOP, WIFI RESET", ptz::kOscPort);
 }
 
 void loop() {
+  g_osc.update();
   handleSerialCommands();
+
+  const uint32_t now = millis();
+  if (g_motion.isMoving() && (now - g_osc.lastRxMs()) > ptz::kHeartbeatTimeoutMs) {
+    if (ptz::logShouldEmit(ptz::kLogRateHeartbeatFired, 2000)) {
+      PTZ_LOGW("OSC", "heartbeat timeout (%ums since last rx), auto-stop",
+               now - g_osc.lastRxMs());
+    }
+    g_motion.stop();
+  }
+
+  // Rate-limited heap monitoring (Pitfall 4 — CNMAT heap trend watch)
+  if (ptz::logShouldEmit(ptz::kLogRateHeapFree, 60000)) {
+    PTZ_LOGI("HEAP", "free=%u", ESP.getFreeHeap());
+  }
 }
