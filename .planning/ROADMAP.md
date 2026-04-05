@@ -37,7 +37,7 @@ Plans:
 ### Phase 2: Network and Core OSC Control
 **Goal**: A user holding a Companion button drives the PTZ head via OSC over WiFi with smooth acceleration and configurable speed presets
 **Depends on**: Phase 1
-**Requirements**: NET-01, NET-02, NET-03, NET-04, NET-05, MOT-01, MOT-02, MOT-03, MOT-04, MOT-05, MOT-06, MOT-07, SPD-01, SPD-02, SPD-03
+**Requirements**: NET-01, NET-02, NET-04, NET-05, MOT-01, MOT-02, MOT-03, MOT-04, MOT-05, MOT-06, MOT-07, SPD-01, SPD-02, SPD-03
 **Success Criteria** (what must be TRUE):
   1. Sending `/ptz/pan`, `/ptz/tilt`, or `/ptz/zoom` OSC messages from any OSC sender causes the corresponding motor to move at the commanded velocity with smooth acceleration
   2. Sending `/ptz/stop` stops all axes smoothly; per-axis stop commands (`/ptz/pan/stop`, etc.) stop individual axes
@@ -54,7 +54,7 @@ Plans:
 ### Phase 3: Feedback and Discovery
 **Goal**: Companion receives live status from the PTZ head (moving state, speed preset, signal strength) and the device is discoverable via mDNS
 **Depends on**: Phase 2
-**Requirements**: FB-01, FB-02, FB-03, FB-04
+**Requirements**: NET-03, FB-01, FB-02, FB-03, FB-04
 **Success Criteria** (what must be TRUE):
   1. Companion receives per-axis moving state as integer values (0/1) and can light button LEDs based on whether an axis is currently moving
   2. Companion receives the active speed preset ID and WiFi RSSI as integer values for display in button text or variables
