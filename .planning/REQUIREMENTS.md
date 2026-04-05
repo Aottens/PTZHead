@@ -33,16 +33,16 @@
 
 - [x] **NET-01**: Firmware connects to WiFi using stored credentials via WiFiManager captive portal
 - [x] **NET-02**: WiFi power save is disabled for sub-50ms OSC response latency
-- [ ] **NET-03**: Firmware advertises via mDNS as `ptzhead.local` with `_osc._udp` service
+- [x] **NET-03**: Firmware advertises via mDNS as `ptzhead.local` with `_osc._udp` service
 - [x] **NET-04**: Firmware listens for OSC on a configurable UDP port
 - [x] **NET-05**: Firmware reconnects to WiFi automatically on disconnect (non-blocking, event-based)
 
 ### OSC Feedback
 
-- [ ] **FB-01**: Firmware sends per-axis moving state back via OSC (integer: 0/1)
-- [ ] **FB-02**: Firmware sends active speed preset ID back via OSC (integer)
-- [ ] **FB-03**: Firmware sends WiFi RSSI back via OSC (integer)
-- [ ] **FB-04**: All OSC feedback uses integer values (Companion generic-osc compatibility)
+- [x] **FB-01**: Firmware sends per-axis moving state back via OSC (integer: 0/1)
+- [x] **FB-02**: Firmware sends active speed preset ID back via OSC (integer)
+- [x] **FB-03**: Firmware sends WiFi RSSI back via OSC (integer)
+- [x] **FB-04**: All OSC feedback uses integer values (Companion generic-osc compatibility)
 
 ## v2 Requirements
 
@@ -95,13 +95,13 @@
 | SPD-03 | Phase 2 | Complete |
 | NET-01 | Phase 2 | Complete |
 | NET-02 | Phase 2 | Complete |
-| NET-03 | Phase 3 | Pending |
+| NET-03 | Phase 3 | Complete |
 | NET-04 | Phase 2 | Complete |
 | NET-05 | Phase 2 | Complete |
-| FB-01 | Phase 3 | Pending |
-| FB-02 | Phase 3 | Pending |
-| FB-03 | Phase 3 | Pending |
-| FB-04 | Phase 3 | Pending |
+| FB-01 | Phase 3 | Complete |
+| FB-02 | Phase 3 | Complete |
+| FB-03 | Phase 3 | Complete |
+| FB-04 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 24 total
