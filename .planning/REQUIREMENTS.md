@@ -11,7 +11,7 @@
 - [x] **PLAT-02**: Bluepad32 gamepad module is fully removed
 - [x] **PLAT-03**: WebSocket API module is fully removed
 - [x] **PLAT-04**: Ownership arbitration module is fully removed
-- [ ] **PLAT-05**: Main loop is simplified for single-source OSC input
+- [x] **PLAT-05**: Main loop is simplified for single-source OSC input
 
 ### Motion Control
 
@@ -82,7 +82,7 @@
 | PLAT-02 | Phase 1 | Complete |
 | PLAT-03 | Phase 1 | Complete |
 | PLAT-04 | Phase 1 | Complete |
-| PLAT-05 | Phase 1 | Pending |
+| PLAT-05 | Phase 1 | Complete |
 | MOT-01 | Phase 2 | Complete |
 | MOT-02 | Phase 2 | Complete |
 | MOT-03 | Phase 2 | Complete |

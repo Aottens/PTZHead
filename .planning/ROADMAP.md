@@ -79,7 +79,7 @@ Plans:
   5. WiFi survives a network drop and reconnects without a power cycle; heartbeat timeout triggers auto-stop
   6. mDNS resolves `ptzhead.local` from another device on the network
   7. Any hardware-specific issues found (pin polarity, timing, thermal, noise) are captured as fixes or documented constraints
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 04-01-PLAN.md — Create test checklist, Companion button config guide, verify firmware compiles
@@ -95,4 +95,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Platform Migration and Cleanup | 2/2 | Code-complete (HW verify deferred to Phase 4) | 2026-04-05 |
 | 2. Network and Core OSC Control | 3/3 | Complete | 2026-04-05 |
 | 3. Feedback and Discovery | 3/3 | Complete | 2026-04-05 |
-| 4. End-to-End Hardware Validation | 0/2 | Not started | - |
+| 4. End-to-End Hardware Validation | 1/2 | In Progress|  |
