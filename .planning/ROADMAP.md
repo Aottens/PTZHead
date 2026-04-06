@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Strip legacy modules, migrate platformio.ini to standard espressif32, clean config
-- [x] 01-02-PLAN.md — Rewrite ptz_motion for FastAccelStepper, add serial test commands (hardware verify → Phase 4)
+- [x] 01-02-PLAN.md — Rewrite ptz_motion for FastAccelStepper, add serial test commands (hardware verify -> Phase 4)
 
 ### Phase 2: Network and Core OSC Control
 **Goal**: A user holding a Companion button drives the PTZ head via OSC over WiFi with smooth acceleration and configurable speed presets
@@ -68,7 +68,7 @@ Plans:
 - [ ] 03-03-PLAN.md — Wave 2: Add ESPmDNS begin/end/addService lifecycle inside WiFi GOT_IP handler for ptzhead.local _osc._udp:8000
 
 ### Phase 4: End-to-End Hardware Validation
-**Goal**: Every feature built in Phases 1–3 is confirmed working on real ESP32 + stepper hardware; deferred Phase 1 checkpoint is closed and the device is declared bench-ready
+**Goal**: Every feature built in Phases 1-3 is confirmed working on real ESP32 + stepper hardware; deferred Phase 1 checkpoint is closed and the device is declared bench-ready
 **Depends on**: Phase 1, Phase 2, Phase 3
 **Requirements**: PLAT-05 (hardware verification, deferred from Phase 1), plus end-to-end validation of NET/MOT/SPD/FB requirements
 **Success Criteria** (what must be TRUE):
@@ -79,19 +79,20 @@ Plans:
   5. WiFi survives a network drop and reconnects without a power cycle; heartbeat timeout triggers auto-stop
   6. mDNS resolves `ptzhead.local` from another device on the network
   7. Any hardware-specific issues found (pin polarity, timing, thermal, noise) are captured as fixes or documented constraints
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Create test checklist, Companion button config guide, verify firmware compiles
+- [ ] 04-02-PLAN.md — Flash hardware, execute test checklist, fix issues, build Companion page, write VALIDATION.md sign-off
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Platform Migration and Cleanup | 2/2 | Code-complete (HW verify deferred to Phase 4) | 2026-04-05 |
 | 2. Network and Core OSC Control | 3/3 | Complete | 2026-04-05 |
-| 3. Feedback and Discovery | 0/? | Not started | - |
-| 4. End-to-End Hardware Validation | 0/? | Not started | - |
+| 3. Feedback and Discovery | 3/3 | Complete | 2026-04-05 |
+| 4. End-to-End Hardware Validation | 0/2 | Not started | - |
