@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-04-06T17:41:34.103Z"
+status: milestone_complete
+stopped_at: Phase 04 complete — all v1 requirements validated on hardware
+last_updated: "2026-04-09T19:30:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-03)
 
 **Core value:** Reliable, low-latency OSC control of a 3-axis PTZ head from Bitfocus Companion
-**Current focus:** Phase 04 — end-to-end-hardware-validation
+**Current focus:** Milestone v1.0 COMPLETE — device is bench-ready
 
 ## Current Position
 
-Phase: 04 (end-to-end-hardware-validation) — EXECUTING
-Plan: 2 of 2
+Phase: 04 (end-to-end-hardware-validation) — COMPLETE
+All phases complete. Milestone v1.0 done.
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Plan: 2 of 2
 | Phase 03-feedback-and-discovery P03 | 1min | 1 tasks | 1 files |
 | Phase 03-feedback-and-discovery P02 | 2min | 3 tasks | 3 files |
 | Phase 04 P01 | 4min | 3 tasks | 2 files |
+| Phase 04 P02 | ~45min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -77,7 +78,10 @@ Recent decisions affecting current work:
 - [Phase 03-feedback-and-discovery]: Aggregate isMoving() delegates to per-axis OR; isMoving() upgraded to const
 - [Phase 03-feedback-and-discovery]: mDNS lifecycle bound to GOT_IP event (not setup()); end() before begin() idempotently recovers from stuck responder
 - [Phase 03-feedback-and-discovery]: OSC feedback reply-to-sender with int32 scalars; on-change diff + 1 Hz self-heal snapshot
-- [Phase 04]: D-pad layout with zoom right, presets surrounding, status column 5; 100ms repeat for heartbeat compatibility
+- [Phase 04]: D-pad layout with zoom right, presets surrounding, status column 5
+- [Phase 04]: Heartbeat watchdog gated by hasReceivedOsc_ — serial debugging works without interference
+- [Phase 04]: Heartbeat timeout 500ms → 5000ms — simple press/release Companion buttons, no repeat loops needed
+- [Phase 04]: mDNS event handlers registered before WiFi.begin() — fixes first-boot mDNS resolution
 
 ### Pending Todos
 
@@ -86,13 +90,13 @@ None yet.
 ### Blockers/Concerns
 
 - ~~AccelStepper vs FastAccelStepper decision~~ RESOLVED: FastAccelStepper chosen
-- WiFi credential persistence across framework switch untested — verify in Phase 04
-- CNMAT/OSC heap behavior needs monitoring during Phase 2 (research flag)
-- Phase 01 hardware verification deferred to Phase 04 — risks carried: pin polarity, speedHz accuracy, auto-disable timing, motor direction
+- ~~WiFi credential persistence across framework switch~~ RESOLVED: credentials persisted, WiFi connected on first boot
+- ~~CNMAT/OSC heap behavior~~ RESOLVED: heap stable at 241K, no leak detected in testing session
+- ~~Phase 01 hardware verification deferred to Phase 04~~ RESOLVED: all axes work, pin polarity correct, auto-disable works, directions correct
 
 ## Session Continuity
 
-Last session: 2026-04-06T17:41:34.101Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-04-09
+Stopped at: Milestone v1.0 complete
 Resume file: None
-Next action: /gsd:plan-phase 3
+Next action: /gsd:complete-milestone
