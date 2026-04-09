@@ -92,6 +92,9 @@ static bool tryStoredCredentials() {
   WiFi.setSleep(false);
   esp_wifi_set_ps(WIFI_PS_NONE);
 
+  // Register event handlers BEFORE WiFi.begin() so GOT_IP fires mDNS setup
+  registerWifiEventHandlers();
+
   WiFi.begin();
 
   const uint32_t startMs = millis();
@@ -99,7 +102,6 @@ static bool tryStoredCredentials() {
     if (WiFi.status() == WL_CONNECTED) {
       PTZ_LOGI("WIFI", "Connected via stored credentials");
       printWifiStatus();
-      registerWifiEventHandlers();
       return true;
     }
     if (logShouldEmit(kLogRateWifiProgress, 500)) {

@@ -29,7 +29,7 @@ constexpr float kZoomAccel = 15000.0f;
 
 // --- OSC / Network ---
 constexpr uint16_t kOscPort = 8000;
-constexpr uint32_t kHeartbeatTimeoutMs = 500;
+constexpr uint32_t kHeartbeatTimeoutMs = 5000;  // 5s — allows simple press/release without repeat loop
 
 // --- OSC Feedback (Phase 3) ---
 constexpr uint32_t kFeedbackPeriodMs = 1000;  // 1s periodic snapshot cadence
