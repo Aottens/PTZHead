@@ -71,7 +71,7 @@ void loop() {
   handleSerialCommands();
 
   const uint32_t now = millis();
-  if (g_motion.isMoving() && (now - g_osc.lastRxMs()) > ptz::kHeartbeatTimeoutMs) {
+  if (g_osc.hasReceivedOsc() && g_motion.isMoving() && (now - g_osc.lastRxMs()) > ptz::kHeartbeatTimeoutMs) {
     if (ptz::logShouldEmit(ptz::kLogRateHeartbeatFired, 2000)) {
       PTZ_LOGW("OSC", "heartbeat timeout (%ums since last rx), auto-stop",
                now - g_osc.lastRxMs());

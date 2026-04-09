@@ -1,36 +1,40 @@
 {
   "version": "1.0",
-  "timestamp": "2026-04-05T19:16:11.493Z",
-  "phase": "03",
-  "phase_name": "feedback-and-discovery",
-  "phase_dir": ".planning/phases/03-feedback-and-discovery",
-  "plan": null,
-  "task": null,
-  "total_tasks": 6,
-  "status": "phase_complete",
+  "timestamp": "2026-04-09T18:57:26.271Z",
+  "phase": "04",
+  "phase_name": "end-to-end-hardware-validation",
+  "phase_dir": ".planning/phases/04-end-to-end-hardware-validation",
+  "plan": 2,
+  "task": 1,
+  "total_tasks": 3,
+  "status": "paused",
   "completed_tasks": [
-    {"id": "03-01", "name": "Foundations: isMoving accessors + constants", "status": "done", "commit": "4c50392"},
-    {"id": "03-02", "name": "OSC feedback TX path", "status": "done", "commit": "d1cb5f8"},
-    {"id": "03-03", "name": "mDNS discovery (ptzhead.local)", "status": "done", "commit": "4358040"}
+    {"id": "04-01-T1", "name": "Create hardware test checklist", "status": "done", "commit": "f92aa37"},
+    {"id": "04-01-T2", "name": "Create Companion StreamDeck button config guide", "status": "done", "commit": "98580f1"},
+    {"id": "04-01-T3", "name": "Verify firmware compiles", "status": "done", "commit": "03e16e9"},
+    {"id": "04-02-T1", "name": "Flash, boot, and serial motor test (SC-1, SC-2)", "status": "in_progress", "progress": "SC-1 PASS (boot+wifi), SC-2 PASS (all 3 axes move, directions correct, decel confirmed). Heartbeat fix applied (uncommitted). Ready for Stage 3 OSC/Companion testing."}
   ],
-  "remaining_tasks": [],
+  "remaining_tasks": [
+    {"id": "04-02-T1", "name": "Flash, boot, and serial motor test (SC-1, SC-2)", "status": "in_progress_continue", "note": "SC-1 and SC-2 passed but heartbeat fix needs committing."},
+    {"id": "04-02-T2", "name": "OSC, feedback, mDNS, WiFi resilience, and Companion page (SC-3 through SC-7)", "status": "not_started"},
+    {"id": "04-02-T3", "name": "Write VALIDATION.md sign-off report", "status": "not_started"}
+  ],
   "blockers": [],
   "human_actions_pending": [
-    {"action": "Hardware verify: ptzhead.local resolves on first boot", "context": "Known edge case — GOT_IP may fire before handler registration in tryStoredCredentials", "blocking": false},
-    {"action": "Hardware verify: /ptz/status/pan|tilt|zoom/moving latency within one loop tick to Companion", "context": "Confirm on-change diff emission hits target responsiveness", "blocking": false},
-    {"action": "Hardware verify: /ptz/status/rssi emits ~1s while WiFi connected", "context": "Confirm 1s self-heal snapshot loop is running", "blocking": false}
+    {"action": "Set up Companion generic-osc connection to 192.168.50.74:8000 (UDP) and configure motion buttons with While Loop repeat (100ms)", "context": "Companion v4.2.6 requires Internal: While Loop + Internal: Wait for repeat — no simple repeat interval field", "blocking": true},
+    {"action": "Test OSC motion, speed presets, feedback, mDNS, WiFi resilience (TEST-CHECKLIST.md Stages 3-7)", "context": "User has Companion installed, StreamDeck connected, ESP32 on network at 192.168.50.74", "blocking": true}
   ],
   "decisions": [
-    {"decision": "ESPmDNS restart-on-GOT_IP pattern", "rationale": "Mitigates ESP32 mDNS 'silent after 2 minutes' bug (Pitfall 1)", "phase": "03"},
-    {"decision": "Sender captured BEFORE buffer drain in OSC RX", "rationale": "Pitfall 5 — prevents stale sender reference after parse", "phase": "03"},
-    {"decision": "1s self-heal snapshot in addition to on-change diff", "rationale": "Ensures Companion recovers state after reconnect/packet loss", "phase": "03"}
+    {"decision": "Heartbeat watchdog only activates after first real OSC packet received", "rationale": "Serial commands were being killed after 500ms by the watchdog since no OSC packets existed. Added hasReceivedOsc_ flag to gate the watchdog, making serial debugging usable long-term.", "phase": "04"},
+    {"decision": "Pan acceleration confirmed tunable and visible at 2000 steps/s^2", "rationale": "User wanted to see deceleration with own eyes. Temporarily lowered from 20000 to 2000, confirmed visible ~2s ramp. Reverted to original — user will tune later with camera mounted.", "phase": "04"},
+    {"decision": "Companion v4.2.6 button repeat uses Internal: While Loop", "rationale": "No simple repeat interval field in v4.x. Must use While Loop + local variable is_held + Internal: Wait 100ms pattern.", "phase": "04"}
   ],
   "uncommitted_files": [
-    ".planning/config.json",
-    ".planning/phases/02-network-and-core-osc-control/02-CONTEXT.md",
-    ".planning/phases/03-feedback-and-discovery/03-CONTEXT.md",
-    "PROJECT.md"
+    "src/main.cpp",
+    "src/ptz_osc.cpp",
+    "src/ptz_osc.h",
+    ".planning/config.json"
   ],
-  "next_action": "Run /gsd:plan-phase 4 (or /gsd:discuss-phase 4 first) to begin Phase 4: end-to-end-hardware-validation",
-  "context_notes": "Phase 3 complete at clean boundary. Verification passed 9/9 must-haves. FB-01..04 + NET-03 all satisfied. Firmware builds clean (Flash 69.7%, RAM 16.1%). Next phase is end-to-end-hardware-validation which will exercise the human verification items listed above on real hardware."
+  "next_action": "Commit the heartbeat fix (hasReceivedOsc_ gate). Then continue Plan 04-02: report SC-1 and SC-2 as PASS. Move to Task 2: user configures Companion buttons and runs Stages 3-7.",
+  "context_notes": "Phase 4 execution is mid-flight. Plan 04-01 fully complete (3 commits). Plan 04-02 Task 1 checkpoint effectively passed — SC-1 (flash/boot) and SC-2 (serial motor test) both verified on real hardware. The heartbeat fix (hasReceivedOsc_) is uncommitted but flashed to ESP32. User has Companion v4.2.6 with StreamDeck connected. ESP32 is at 192.168.50.74 on WiFi 'Nozem'. RSSI=-79 to -86. Next session: commit fix, guide user through Companion While Loop button setup, run Stages 3-7, write VALIDATION.md."
 }

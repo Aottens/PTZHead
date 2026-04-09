@@ -36,12 +36,17 @@ class PtzOsc {
   // Returns 0 if none received yet.
   uint32_t lastRxMs() const { return lastRxMs_; }
 
+  // True once a real OSC packet has been received (not just the boot seed).
+  // Heartbeat watchdog should only apply after this returns true.
+  bool hasReceivedOsc() const { return hasReceivedOsc_; }
+
   // Accessor used by file-static trampolines to reach motion_ via s_self.
   PtzMotion* motionPtr() { return motion_; }
 
  private:
   PtzMotion* motion_ = nullptr;
   uint32_t lastRxMs_ = 0;
+  bool     hasReceivedOsc_ = false;
 
   // Reply-to-sender cache — populated from s_udp.remoteIP()/remotePort() after
   // each successful packet parse. NEVER touched by the send path.

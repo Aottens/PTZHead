@@ -103,7 +103,7 @@ void PtzOsc::begin(PtzMotion* motion) {
   motion_ = motion;
   s_self = this;
   s_udp.begin(kOscPort);
-  lastRxMs_ = millis();  // seed so heartbeat doesn't fire at boot
+  // No lastRxMs_ seed needed — hasReceivedOsc_ gates the heartbeat watchdog
   PTZ_LOGI("OSC", "listening on UDP port %u", kOscPort);
 }
 
@@ -123,6 +123,7 @@ void PtzOsc::update() {
       continue;
     }
     lastRxMs_ = millis();                  // RX-only — heartbeat owned
+    hasReceivedOsc_ = true;
     lastSenderIp_   = remoteIp;            // TX target for feedback
     lastSenderPort_ = remotePort;
     dispatchAll(msg);
